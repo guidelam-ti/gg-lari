@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+      # Branche de travail, conservée le temps de la mise en route. Elle peut
+      # être retirée après la fusion dans main : Pages n'héberge qu'une seule
+      # version du site, et un push sur cette branche écraserait celle publiée
+      # depuis main.
       - claude/static-site-github-pages-0hpvzy
   workflow_dispatch:
 

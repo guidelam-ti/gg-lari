@@ -14,11 +14,11 @@
 
 name: Déployer le site sur Cloudflare Pages
 
+# GitHub Pages a été retenu comme hébergeur : ce workflow ne se déclenche donc
+# plus automatiquement, pour ne pas encombrer l'onglet Actions à chaque push.
+# Il reste lançable à la main depuis Actions → « Run workflow » si Cloudflare Pages
+# devient un jour préférable.
 on:
-  push:
-    branches:
-      - main
-      - claude/static-site-github-pages-0hpvzy
   workflow_dispatch:
 
 permissions:

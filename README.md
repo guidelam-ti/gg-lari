@@ -40,67 +40,51 @@ reproduit plus fidèlement le comportement en ligne.
 
 ## Où héberger le site
 
-Trois pipelines sont fournis dans `.github/workflows/`. Ils déploient tous
-exactement le même dossier ; il suffit d'en choisir un. Ceux dont les secrets
-ne sont pas renseignés se terminent sans rien faire, sans faire échouer la
-suite — on peut donc les laisser en place.
+**GitHub Pages a été retenu**, avec le dépôt rendu public. C'est l'option la
+plus simple et elle ne coûte rien : le code d'un site vitrine n'a rien de
+confidentiel. Le workflow `deploy.yml` s'en charge à chaque push sur `main`.
+
+Deux workflows alternatifs restent dans le dépôt, en **lancement manuel
+uniquement** (Actions → « Run workflow »), au cas où l'un devienne préférable :
 
 | Hébergeur | Dépôt privé en gratuit | Formulaire inclus | Workflow |
 |---|---|---|---|
-| **Netlify** | oui | **oui**, Netlify Forms | `deploy-netlify.yml` |
-| **Cloudflare Pages** | oui | non | `deploy-cloudflare.yml` |
-| **GitHub Pages** | non, plan payant requis | non | `deploy.yml` |
+| **GitHub Pages** (retenu) | non, dépôt public requis | non | `deploy.yml` |
+| Netlify | oui | **oui**, Netlify Forms | `deploy-netlify.yml` |
+| Cloudflare Pages | oui | non | `deploy-cloudflare.yml` |
 
-**Recommandation : Netlify.** C'est le seul des trois qui règle les deux
-problèmes d'un coup. Il accepte un dépôt privé sur l'offre gratuite, ce qui
-évite de rendre le code public, et **Netlify Forms** reçoit les demandes du
-formulaire et les transfère par courriel — plus besoin de Formspree ni d'aucun
-autre service. L'offre gratuite couvre 100 envois de formulaire par mois et
-100 Go de bande passante, très au-delà des besoins d'un site vitrine.
-
-**Cloudflare Pages** est le choix à faire si la vitesse d'affichage prime : bande
-passante illimitée, réseau très rapide, domaine personnalisé et certificat
-gratuits. Mais il ne gère pas les formulaires, il faut donc garder Formspree à
-côté.
-
-**GitHub Pages** reste parfaitement valable à une condition : rendre le dépôt
-public. Le site est une vitrine, son code n'a rien de confidentiel, et cela ne
-coûte rien. C'est l'option la plus simple si vous ne voulez pas créer de compte
-ailleurs.
+L'argument en faveur de Netlify serait **Netlify Forms** : les demandes du
+formulaire arriveraient par courriel sans aucun service tiers. `contact.html`
+porte déjà les attributs nécessaires, inertes ailleurs. Cloudflare Pages
+offrirait une bande passante illimitée et un réseau plus rapide, mais sans
+gestion de formulaire.
 
 Deux options volontairement écartées :
 
 - **Vercel** — techniquement excellent, mais son offre gratuite (« Hobby ») est
   réservée aux projets **non commerciaux**. Éclats et Saveurs étant une
   entreprise, l'utiliser sur ce plan irait à l'encontre de ses conditions.
-- **AWS S3 + CloudFront** — puissant et bon marché, mais il n'y a pas d'offre
-  gratuite permanente et la configuration initiale (bucket, distribution,
-  certificat, DNS) est disproportionnée pour cinq pages statiques.
+- **AWS S3 + CloudFront** — puissant et bon marché, mais sans offre gratuite
+  permanente, et la configuration initiale est disproportionnée pour cinq pages.
 
-### Mettre en route Netlify
+### Si l'on passait à Netlify
 
-1. Créer un compte sur [netlify.com](https://www.netlify.com) et y créer un site
-   vide (**Add new site → Deploy manually**, en déposant n'importe quoi ; le
-   workflow écrasera le contenu au premier déploiement).
-2. Relever le **Site ID** dans **Site configuration → Site details**.
-3. Créer un jeton dans **User settings → Applications → Personal access tokens**.
-4. Dans GitHub, **Settings → Secrets and variables → Actions → New repository
-   secret**, ajouter `NETLIFY_AUTH_TOKEN` et `NETLIFY_SITE_ID`.
-5. Pousser, ou lancer le workflow à la main depuis l'onglet **Actions**.
+1. Créer un site vide sur [netlify.com](https://www.netlify.com), relever le
+   **Site ID** (Site configuration → Site details) et créer un jeton
+   (User settings → Applications → Personal access tokens).
+2. Ajouter les secrets `NETLIFY_AUTH_TOKEN` et `NETLIFY_SITE_ID` dans
+   Settings → Secrets and variables → Actions.
+3. Lancer `deploy-netlify.yml` depuis l'onglet Actions.
+4. Activer la notification par courriel (Site configuration → Forms → Form
+   notifications) et mettre `FORM_ENDPOINT = "/"` dans `assets/main.js`.
 
-Pour recevoir les demandes par courriel : **Site configuration → Forms →
-Form notifications → Add notification → Email notification**, et indiquer
-l'adresse de Christelle. Puis mettre `FORM_ENDPOINT = "/"` dans
-`assets/main.js`.
+### Si l'on passait à Cloudflare Pages
 
-### Mettre en route Cloudflare Pages
-
-1. Créer un compte sur [cloudflare.com](https://dash.cloudflare.com) et relever
-   l'**Account ID** sur le tableau de bord.
-2. Créer un jeton d'API avec la permission **Cloudflare Pages — Edit**.
-3. Ajouter les secrets `CLOUDFLARE_API_TOKEN` et `CLOUDFLARE_ACCOUNT_ID`.
-4. Facultatif : la variable `CLOUDFLARE_PROJECT_NAME` change le nom du projet,
-   qui vaut `eclats-et-saveurs` par défaut.
+Relever l'**Account ID** sur le tableau de bord, créer un jeton d'API avec la
+permission **Cloudflare Pages — Edit**, ajouter les secrets
+`CLOUDFLARE_API_TOKEN` et `CLOUDFLARE_ACCOUNT_ID`, puis lancer
+`deploy-cloudflare.yml`. La variable `CLOUDFLARE_PROJECT_NAME` permet de changer
+le nom du projet, qui vaut `eclats-et-saveurs` par défaut.
 
 ## Déploiement sur GitHub Pages
 
@@ -126,11 +110,12 @@ suivre plutôt que d'échouer sans explication.
 1. **Source de publication.** Dans **Settings → Pages → Build and deployment →
    Source**, choisir **GitHub Actions**.
 
-2. **Dépôt privé ou public.** GitHub Pages n'est disponible sur un dépôt
-   **privé** qu'avec un plan payant (GitHub Pro, Team ou Enterprise). Ce dépôt
-   est actuellement privé : en plan gratuit, il faut le passer en public
-   (**Settings → General → Danger Zone → Change repository visibility**) pour
-   que le déploiement aboutisse.
+2. **Dépôt public.** GitHub Pages n'est disponible sur un dépôt privé qu'avec
+   un plan payant. Le dépôt doit donc être public :
+   **Settings → General → Danger Zone → Change repository visibility →
+   Change to public**. L'historique git a été vérifié au préalable : il ne
+   contient que les 19 fichiers du site, aucun jeton ni clé, et les adresses
+   des commits sont déjà anonymisées.
 
 3. **Relancer le workflow.** Onglet **Actions** → « Déployer le site sur GitHub
    Pages » → **Run workflow**, en sélectionnant la branche.
