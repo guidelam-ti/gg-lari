@@ -12,22 +12,24 @@
      Voir README.md, section « Brancher le formulaire de contact ».
      ------------------------------------------------------------------------ */
 
-  /* Adresse à laquelle le formulaire est envoyé. Trois valeurs possibles :
-       - ""                            repli mailto (état actuel) : la demande
-                                       s'ouvre pré-rédigée dans le logiciel de
+  /* Adresse de réception des réservations (Christelle Yamdjeu, fondatrice).
+     Sert au repli mailto et aux messages d'erreur ; doit rester identique à
+     l'adresse affichée dans contact.html et dans le pied de page. */
+  var CONTACT_EMAIL = "laritaffou@gmail.com";
+
+  /* Adresse à laquelle le formulaire est envoyé. FormSubmit est le service
+     retenu : il ne demande aucune création de compte, l'adresse de réception
+     est validée une seule fois par un courriel de confirmation.
+     Trois autres valeurs sont possibles :
+       - ""                            repli mailto : la demande s'ouvre
+                                       pré-rédigée dans le logiciel de
                                        messagerie du visiteur ;
        - "https://formspree.io/f/xxx"  endpoint Formspree ;
        - "/"                           site déployé sur Netlify, Netlify Forms
                                        prend le relais grâce aux attributs du
                                        formulaire dans contact.html.
-     TODO: renseigner l'endpoint choisi. Voir README, « Brancher le formulaire
-     de contact ». */
-  var FORM_ENDPOINT = "";
-
-  /* Adresse de réception des réservations (Christelle Yamdjeu, fondatrice).
-     Sert au repli mailto et aux messages d'erreur ; doit rester identique à
-     l'adresse affichée dans contact.html et dans le pied de page. */
-  var CONTACT_EMAIL = "laritaffou@gmail.com";
+     Voir README, « Brancher le formulaire de contact ». */
+  var FORM_ENDPOINT = "https://formsubmit.co/ajax/" + CONTACT_EMAIL;
 
   /* ======================================================================
      1. Menu mobile
@@ -219,13 +221,48 @@
         bouton.textContent = "Envoi en cours…";
       }
 
+      /* Champs de configuration propres à FormSubmit. Ajoutés uniquement pour
+         lui, afin de ne pas polluer les envois d'un autre service. Le champ
+         « email » du formulaire sert automatiquement d'adresse de réponse. */
+      if (/\/\/formsubmit\.co\//.test(FORM_ENDPOINT)) {
+        formData.append("_subject", "Demande " + donnees.service + " — " + donnees.nom);
+        formData.append("_template", "table");
+        formData.append("_captcha", "false");
+        /* Reprend le piège à robots sous le nom attendu par FormSubmit, puis
+           retire les champs propres à Netlify : FormSubmit recopie tout ce
+           qu'il reçoit dans le courriel, et « form-name » comme « bot-field »
+           n'apporteraient rien à la lecture. */
+        formData.append("_honey", formData.get("bot-field") || "");
+        formData.delete("bot-field");
+        formData.delete("form-name");
+      }
+
       fetch(FORM_ENDPOINT, {
         method: "POST",
         headers: { Accept: "application/json" },
         body: formData
       })
         .then(function (reponse) {
-          if (!reponse.ok) throw new Error("Réponse " + reponse.status);
+          /* FormSubmit répond 200 même quand l'adresse de réception n'a pas
+             encore été confirmée : le corps de la réponse le signale. Se fier
+             au seul code HTTP annoncerait un succès qui n'en est pas un. */
+          return reponse
+            .json()
+            .catch(function () { return null; })
+            .then(function (corps) {
+              return { ok: reponse.ok, statut: reponse.status, corps: corps };
+            });
+        })
+        .then(function (r) {
+          var refuse = r.corps && String(r.corps.success) === "false";
+          if (!r.ok || refuse) {
+            /* Le détail technique va dans la console, pas sous les yeux du
+               visiteur : les messages de ces services sont en anglais. */
+            if (window.console && console.warn) {
+              console.warn("Envoi du formulaire refusé :", r.statut, r.corps);
+            }
+            throw new Error("envoi refusé");
+          }
           formulaire.reset();
           annoncer(
             "Merci " + donnees.nom + ", votre demande est bien partie. " +
@@ -233,10 +270,12 @@
             false
           );
         })
-        .catch(function () {
+        .catch(function (erreur) {
+          if (window.console && console.warn) console.warn(erreur);
           annoncer(
-            "L'envoi n'a pas abouti. Réessayez dans un instant ou écrivez-nous " +
-            "directement à " + CONTACT_EMAIL + ".",
+            "L'envoi n'a pas abouti. Réessayez dans un instant, ou écrivez " +
+            "directement à " + CONTACT_EMAIL + " — votre demande sera traitée " +
+            "de la même façon.",
             true
           );
         })
