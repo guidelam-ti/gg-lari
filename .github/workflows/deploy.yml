@@ -1,14 +1,16 @@
 name: Déployer le site sur GitHub Pages
 
 on:
+  # Seul main publie : l'environnement github-pages n'autorise les
+  # déploiements que depuis la branche par défaut, et Pages n'héberge qu'une
+  # seule version du site. Déployer depuis une branche de travail écraserait
+  # le site publié avec du code non relu.
   push:
     branches:
       - main
-      # Branche de travail, conservée le temps de la mise en route. Elle peut
-      # être retirée après la fusion dans main : Pages n'héberge qu'une seule
-      # version du site, et un push sur cette branche écraserait celle publiée
-      # depuis main.
-      - claude/static-site-github-pages-0hpvzy
+  # Les pull requests passent la vérification mais ne publient pas : les liens
+  # cassés et les erreurs de syntaxe sont donc détectés avant la fusion.
+  pull_request:
   workflow_dispatch:
 
 # Permissions minimales requises par actions/deploy-pages.
@@ -91,6 +93,10 @@ jobs:
   deployer:
     name: Déployer sur GitHub Pages
     needs: verifier
+    # Ni sur une pull request, ni sur une branche de travail : l'environnement
+    # github-pages rejetterait le déploiement, ce qui ferait échouer la CI sans
+    # qu'il y ait quoi que ce soit à corriger.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

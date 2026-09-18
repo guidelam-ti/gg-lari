@@ -88,24 +88,33 @@ le nom du projet, qui vaut `eclats-et-saveurs` par défaut.
 
 ## Déploiement sur GitHub Pages
 
-Le workflow `.github/workflows/deploy.yml` se déclenche à chaque push sur `main`
-ou sur `claude/static-site-github-pages-0hpvzy`, et peut aussi être lancé à la
-main depuis l'onglet **Actions** (bouton « Run workflow »).
-
-Il exécute deux tâches :
+Le workflow `.github/workflows/deploy.yml` exécute deux tâches :
 
 1. **Vérifier** — présence des 5 pages et de leurs ressources, syntaxe du
    JavaScript, et contrôle que tous les liens et ressources internes existent et
-   sont bien en chemin *relatif*.
+   sont bien en chemin *relatif*. Tourne sur `main` **et sur chaque pull
+   request**, de sorte qu'un lien cassé est détecté avant la fusion.
 2. **Déployer** — assemble le site dans `_site/` (en excluant `.git`, `.github`
-   et ce README), puis publie via `actions/deploy-pages`.
+   et ce README), puis publie via `actions/deploy-pages`. **Ne tourne que sur
+   `main`.**
 
-### Deux réglages à faire une seule fois
+Pourquoi seul `main` publie : l'environnement `github-pages` n'autorise les
+déploiements que depuis la branche par défaut, et Pages n'héberge de toute façon
+qu'une seule version du site. Publier depuis une branche de travail écraserait
+le site en ligne avec du code non relu — et échouerait de toute manière sur
+`Branch … is not allowed to deploy to github-pages`.
 
-Ces deux réglages ne peuvent pas être faits depuis un workflow : le jeton
-`GITHUB_TOKEN` n'a pas le droit de créer un site Pages (`Resource not
-accessible by integration`). Le workflow le détecte et affiche la marche à
-suivre plutôt que d'échouer sans explication.
+Le workflow peut aussi être lancé à la main depuis l'onglet **Actions**
+(« Run workflow ») ; lancé depuis une autre branche que `main`, il vérifie sans
+publier.
+
+### Les deux réglages initiaux (déjà faits)
+
+Ces deux réglages ont été effectués : le dépôt est public et Pages publie
+depuis GitHub Actions. Ils sont conservés ici pour mémoire, car ils ne peuvent
+pas être faits depuis un workflow — le jeton `GITHUB_TOKEN` n'a pas le droit de
+créer un site Pages (`Resource not accessible by integration`). Le workflow le
+détecte et affiche la marche à suivre plutôt que d'échouer sans explication.
 
 1. **Source de publication.** Dans **Settings → Pages → Build and deployment →
    Source**, choisir **GitHub Actions**.
@@ -150,55 +159,66 @@ absolu est introduit, pour éviter une régression silencieuse.
 
 Aucune modification du code n'est nécessaire, les chemins étant déjà relatifs.
 
-## Brancher le formulaire de contact
+## Le formulaire de contact
 
-Le formulaire fonctionne dès maintenant, sans configuration : faute d'endpoint,
-il ouvre le logiciel de messagerie du visiteur avec une demande déjà rédigée
-(repli `mailto` vers l'adresse de Christelle). C'est fonctionnel, mais cela
-dépend du logiciel de messagerie du visiteur et ne laisse aucune trace côté
-Éclats et Saveurs. Trois façons de faire mieux, au choix.
-
-La constante à modifier est la même dans les trois cas, en haut de
-`assets/main.js` :
+Le formulaire est branché sur **FormSubmit**, choisi parce qu'il ne demande
+aucune création de compte : l'adresse de réception est validée une seule fois
+par un courriel de confirmation. L'endpoint est construit dans
+`assets/main.js` à partir de `CONTACT_EMAIL` :
 
 ```js
-var FORM_ENDPOINT = "";
+var CONTACT_EMAIL  = "laritaffou@gmail.com";
+var FORM_ENDPOINT  = "https://formsubmit.co/ajax/" + CONTACT_EMAIL;
 ```
 
-### Option A — Netlify Forms (recommandée si le site est sur Netlify)
+### Une activation à faire une seule fois
 
-Aucun service tiers, aucun compte de plus. `contact.html` porte déjà les
-attributs nécessaires (`data-netlify`, `form-name`, piège à robots) ; ils sont
-inertes sur les autres hébergeurs. Il suffit de mettre :
+FormSubmit n'envoie son courriel de confirmation qu'**au premier envoi du
+formulaire**. Il faut donc, dès la mise en ligne :
 
-```js
-var FORM_ENDPOINT = "/";
-```
+1. Ouvrir la page Contact du site publié et envoyer une demande de test.
+2. Christelle reçoit un courriel de FormSubmit et clique sur le lien
+   d'activation.
+3. À partir de là, chaque demande arrive dans sa boîte.
 
-puis d'activer la notification par courriel dans l'interface Netlify.
+**À faire avant de communiquer l'adresse du site.** Tant que l'activation n'a
+pas eu lieu, le formulaire affiche un message d'échec invitant à écrire
+directement à Christelle — le visiteur n'est donc jamais laissé sans solution,
+mais sa demande n'arrive pas par le formulaire.
 
-### Option B — Formspree
+### Ce que reçoit Christelle
 
-1. Créer un formulaire sur [formspree.io](https://formspree.io) avec l'adresse
-   de réception.
-2. Copier l'endpoint, de la forme `https://formspree.io/f/xxxxxxxx`.
-3. Le coller dans `FORM_ENDPOINT`.
+Le courriel est mis en forme en tableau (`_template: table`) et son objet
+reprend le service et le nom du demandeur, par exemple
+« Demande Décoration & Événements — Aminata Diallo ». L'adresse du visiteur
+sert d'adresse de réponse : il suffit de répondre au courriel.
 
-L'offre gratuite couvre 50 envois par mois.
+Les champs propres à Netlify (`form-name`, `bot-field`) sont retirés avant
+l'envoi, FormSubmit recopiant dans le courriel tout ce qu'il reçoit. Le piège à
+robots est transmis sous le nom `_honey` attendu par le service.
 
-### Option C — FormSubmit, sans création de compte
+### Comportement en cas de problème
 
-[FormSubmit](https://formsubmit.co) ne demande aucune inscription : l'endpoint
-est construit à partir de l'adresse de réception, et un courriel de
-confirmation valide l'activation au premier envoi.
+FormSubmit répond `HTTP 200` même lorsque l'adresse n'est pas encore confirmée,
+en signalant le refus dans le corps de la réponse. Le code lit donc le corps et
+pas seulement le code HTTP : sans cela, le visiteur verrait un faux message de
+succès. Les quatre cas — envoi accepté, adresse non confirmée, erreur serveur,
+connexion coupée — sont vérifiés au navigateur avec des réponses simulées.
 
-```js
-var FORM_ENDPOINT = "https://formsubmit.co/ajax/laritaffou@gmail.com";
-```
+En cas d'échec, le formulaire n'est pas vidé, le bouton est réactivé, et le
+message invite à écrire directement à Christelle. Le détail technique part dans
+la console du navigateur, pas sous les yeux du visiteur : les messages de ces
+services sont en anglais.
 
-C'est la voie la plus rapide, mais l'adresse apparaît alors en clair dans le
-code source du site. FormSubmit fournit un identifiant anonyme après le premier
-envoi : il est préférable de l'utiliser à la place de l'adresse.
+### Changer de service
+
+Trois autres valeurs sont possibles pour `FORM_ENDPOINT` :
+
+| Valeur | Effet |
+|---|---|
+| `""` | repli `mailto` : la demande s'ouvre pré-rédigée dans le logiciel de messagerie du visiteur |
+| `"https://formspree.io/f/xxxxxxxx"` | Formspree, 50 envois par mois en gratuit, compte requis |
+| `"/"` | site déployé sur Netlify : Netlify Forms prend le relais grâce aux attributs déjà présents dans `contact.html` |
 
 ## Informations encore manquantes
 
@@ -212,15 +232,18 @@ grep -rn "TODO" --include="*.html" --include="*.js" .
 | À fournir | Où le renseigner |
 |---|---|
 | Liens Facebook / Instagram | pied de page des 5 pages, bloc « Coordonnées » de `contact.html` |
-| Endpoint du formulaire | `FORM_ENDPOINT` dans `assets/main.js` — voir la section ci-dessus |
 | Photos réelles des plats et des événements | déposer dans `assets/img/`, puis remplacer les `src` des `<img>` de la galerie dans `cuisine.html` et `decoration-evenements.html` |
 | Horaires d'ouverture | non affichés pour l'instant ; à ajouter au pied de page si utile |
 | Domaine personnalisé | voir « Ajouter un domaine personnalisé » ci-dessus |
 
 Déjà renseigné : adresse de réception `laritaffou@gmail.com` (Christelle
 Yamdjeu, fondatrice), zone desservie Montréal (Canada), délai de réponse annoncé
-de 24 heures au maximum. Aucun numéro de téléphone n'est affiché, conformément
-à la demande.
+de 24 heures au maximum, formulaire branché sur FormSubmit. Aucun numéro de
+téléphone n'est affiché, conformément à la demande.
+
+**Action restante côté Christelle :** envoyer une demande de test depuis le site
+publié et cliquer sur le lien d'activation de FormSubmit. Voir « Le formulaire
+de contact » ci-dessus.
 
 > L'adresse de Christelle apparaît en clair dans le code source des pages, ce
 > qui l'expose aux robots collecteurs de courriels. Une fois le formulaire
