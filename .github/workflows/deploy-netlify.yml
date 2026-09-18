@@ -1,0 +1,69 @@
+# Déploiement alternatif à GitHub Pages.
+#
+# Netlify fonctionne avec un dépôt privé sur l'offre gratuite, et fournit
+# Netlify Forms : les demandes du formulaire de contact arrivent par courriel
+# sans passer par un service tiers supplémentaire.
+#
+# Deux secrets à créer dans Settings → Secrets and variables → Actions :
+#   NETLIFY_AUTH_TOKEN  jeton personnel (Netlify → User settings → Applications)
+#   NETLIFY_SITE_ID     identifiant du site (Site configuration → Site details)
+# Tant qu'ils sont absents, ce workflow se termine sans rien faire.
+
+name: Déployer le site sur Netlify
+
+# GitHub Pages a été retenu comme hébergeur : ce workflow ne se déclenche donc
+# plus automatiquement, pour ne pas encombrer l'onglet Actions à chaque push.
+# Il reste lançable à la main depuis Actions → « Run workflow » si Netlify
+# devient un jour préférable.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: netlify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deployer:
+    name: Déployer sur Netlify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Les secrets Netlify sont-ils présents ?
+        id: secrets
+        env:
+          JETON: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          SITE: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          if [ -n "$JETON" ] && [ -n "$SITE" ]; then
+            echo "configure=true" >> "$GITHUB_OUTPUT"
+            echo "Secrets Netlify présents, le déploiement va suivre."
+          else
+            echo "configure=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Netlify n'est pas configuré, déploiement ignoré. Pour l'activer, créer les secrets NETLIFY_AUTH_TOKEN et NETLIFY_SITE_ID dans Settings → Secrets and variables → Actions."
+          fi
+
+      - name: Assembler le site
+        if: steps.secrets.outputs.configure == 'true'
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='_site/' \
+            --exclude='README.md' \
+            ./ _site/
+
+      - name: Déployer
+        if: steps.secrets.outputs.configure == 'true'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npx --yes netlify-cli@17 deploy \
+            --dir=_site \
+            --prod \
+            --message "${{ github.sha }} — ${{ github.event.head_commit.message || 'déploiement manuel' }}"

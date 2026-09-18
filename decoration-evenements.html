@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Décoration et événements — Forfaits Essentiel, Élégance et Signature | Éclats et Saveurs</title>
+  <meta name="description" content="Trois forfaits de décoration d’événement : Essentiel 300 $ à 450 $, Élégance 500 $ à 750 $, Signature 800 $ à 1 200 $. Backdrop, ballons, fleurs, décoration de table, installation et montage.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,600&family=Work+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+  <!-- EN-TÊTE PARTAGÉ — identique sur les 5 pages. Toute modification de la
+       navigation doit être reportée dans chacune d'elles. -->
+  <header class="entete">
+    <div class="enveloppe entete__barre">
+      <!-- alt vide : le nom qui suit dit déjà la marque, un alt le répéterait
+           inutilement aux lecteurs d'écran. -->
+      <a class="logo" href="index.html">
+        <img class="logo__signe" src="assets/img/logo.svg" alt="" width="36" height="36">
+        <span class="logo__mot">Éclats et Saveurs</span>
+      </a>
+
+      <button class="bascule-menu" type="button" data-bascule-menu
+              aria-expanded="false" aria-controls="navigation-principale"
+              aria-label="Ouvrir le menu de navigation">
+        <span class="bascule-menu__barres"><span></span></span>
+      </button>
+
+      <nav class="nav" id="navigation-principale" data-nav aria-label="Navigation principale">
+        <ul class="nav__liste">
+          <li><a class="nav__lien" href="index.html">Accueil</a></li>
+          <li><a class="nav__lien" href="cuisine.html">Cuisine</a></li>
+          <li><a class="nav__lien" href="aide-a-domicile.html">Aide à domicile</a></li>
+          <li><a class="nav__lien" href="decoration-evenements.html" aria-current="page">Décoration & Événements</a></li>
+          <li><a class="nav__lien" href="contact.html">Contact</a></li>
+          <li><a class="bouton bouton--reserver" href="contact.html">Réserver</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section class="heros">
+      <div class="enveloppe heros__contenu">
+        <h1>Créons ensemble un événement à votre image.</h1>
+        <p class="heros__accroche">Backdrop, ballons, fleurs, décoration de table et
+          personnalisation. Trois forfaits pour trois niveaux de mise en scène.</p>
+      </div>
+    </section>
+
+    <section class="section--serre">
+      <div class="enveloppe pile pile--6">
+        <h2 class="titre-section">Nos trois forfaits</h2>
+
+        <!-- Illustration de marque, à remplacer par une vraie photo d’événement
+             dès qu’elle sera disponible. -->
+        <ul class="galerie galerie--large">
+          <li>
+            <figure>
+              <img src="assets/img/illustration-evenement.svg" width="400" height="400"
+                   alt="Illustration d’une arche de ballons dorés, verts et ivoire au-dessus d’une table dressée avec un gâteau.">
+              <figcaption>Arche, ballons et table dressée : la mise en scène d’un événement.</figcaption>
+            </figure>
+          </li>
+        </ul>
+
+
+        <div class="grille-forfaits">
+          <article class="forfait">
+            <h3 class="forfait__nom">Essentiel</h3>
+            <p class="forfait__prix">300 $ à 450 $</p>
+            <ul class="liste-puces">
+              <li>Backdrop</li>
+              <li>Ballons</li>
+              <li>Décoration de base</li>
+            </ul>
+          </article>
+
+          <article class="forfait">
+            <h3 class="forfait__nom">Élégance</h3>
+            <p class="forfait__prix">500 $ à 750 $</p>
+            <ul class="liste-puces">
+              <li>Arche ou backdrop</li>
+              <li>Ballons</li>
+              <li>Fleurs</li>
+              <li>Table dessert</li>
+              <li>Accessoires</li>
+            </ul>
+          </article>
+
+          <article class="forfait">
+            <h3 class="forfait__nom">Signature</h3>
+            <p class="forfait__prix">800 $ à 1 200 $</p>
+            <ul class="liste-puces">
+              <li>Arche ou backdrop</li>
+              <li>Ballons</li>
+              <li>Fleurs</li>
+              <li>Décoration de table</li>
+              <li>Personnalisation</li>
+              <li>Installation et montage</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section--serre">
+      <div class="enveloppe pile pile--6">
+        <h2 class="titre-section">Bon à savoir</h2>
+
+        <div class="grille-poles">
+          <article class="pile pile--3">
+            <h3>Décoration de table seule</h3>
+            <p>La décoration de table est possible seule, sans prendre un forfait complet.</p>
+          </article>
+
+          <article class="pile pile--3">
+            <h3>Installation et montage</h3>
+            <p>Installation et montage compris dans les forfaits, selon les conditions du service.
+               Le montage seul est possible lorsque vous disposez déjà du matériel nécessaire.</p>
+          </article>
+        </div>
+
+        <div class="encart">
+          <p class="encart__titre">Réservation</p>
+          <p><strong>30 % du montant total</strong> est demandé au moment de la réservation afin de
+             confirmer et garantir la prestation.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="frise" aria-hidden="true"></div>
+
+    <section class="section bande">
+      <div class="enveloppe pile pile--5">
+        <h2 class="titre-section">Parlez-nous de votre événement</h2>
+        <p class="chapeau">La date, le lieu, le nombre d’invités et l’ambiance que vous imaginez :
+           nous construisons la proposition à partir de là.</p>
+        <div class="groupe-boutons">
+          <a class="bouton bouton--reserver" href="contact.html">Demander un devis événement</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PIED DE PAGE PARTAGÉ — identique sur les 5 pages. -->
+  <footer class="pied">
+    <div class="enveloppe">
+      <div class="pied__grille">
+        <div>
+          <p class="pied__titre">Éclats et Saveurs</p>
+          <p>Des saveurs qui rassemblent, des services qui facilitent votre quotidien
+             et des événements qui créent de beaux souvenirs.</p>
+        </div>
+
+        <div>
+          <p class="pied__titre">Nous joindre</p>
+          <ul>
+            <li><a href="mailto:laritaffou@gmail.com">laritaffou@gmail.com</a></li>
+            <li>Montréal, Canada</li>
+            <li>Réponse sous 24 heures</li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="pied__titre">Réseaux</p>
+          <ul>
+            <!-- TODO: remplacer par les liens Facebook / Instagram s'ils existent,
+                 ou retirer cette colonne -->
+            <li>Facebook à venir</li>
+            <li>Instagram à venir</li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="pied__titre">Le site</p>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="cuisine.html">Cuisine</a></li>
+            <li><a href="aide-a-domicile.html">Aide à domicile</a></li>
+            <li><a href="decoration-evenements.html">Décoration & Événements</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pied__bas">
+        <p>© 2026 Éclats et Saveurs. Tous droits réservés.</p>
+        <p>Les tarifs affichés sont des prix de base, ajustables selon votre demande.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/main.js"></script>
+</body>
+</html>

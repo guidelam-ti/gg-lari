@@ -1,0 +1,147 @@
+name: Déployer le site sur GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      # Branche de travail, conservée le temps de la mise en route. Elle peut
+      # être retirée après la fusion dans main : Pages n'héberge qu'une seule
+      # version du site, et un push sur cette branche écraserait celle publiée
+      # depuis main.
+      - claude/static-site-github-pages-0hpvzy
+  workflow_dispatch:
+
+# Permissions minimales requises par actions/deploy-pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois, sans annuler celui déjà en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  verifier:
+    name: Vérifier les fichiers du site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Présence des fichiers attendus
+        run: |
+          manquants=0
+          for fichier in \
+            index.html \
+            cuisine.html \
+            aide-a-domicile.html \
+            decoration-evenements.html \
+            contact.html \
+            assets/style.css \
+            assets/main.js \
+            assets/favicon.svg \
+            .nojekyll
+          do
+            if [ ! -e "$fichier" ]; then
+              echo "::error file=$fichier::Fichier du site manquant"
+              manquants=1
+            fi
+          done
+          [ "$manquants" -eq 0 ] || exit 1
+          echo "Les 5 pages et leurs ressources sont présentes."
+
+      - name: Syntaxe du JavaScript
+        run: node --check assets/main.js
+
+      - name: Ressources et liens internes résolus
+        run: |
+          python3 - <<'PY'
+          import glob, os, re, sys
+
+          EXTERNES = ('#', 'mailto:', 'tel:', 'http://', 'https://', 'data:', '//')
+          casse = 0
+
+          for page in sorted(glob.glob('*.html')):
+              source = open(page, encoding='utf-8').read()
+              # Les commentaires HTML documentent des pistes futures (logo, photos) :
+              # ce ne sont pas des références réelles, on ne les vérifie pas.
+              vivant = re.sub(r'<!--.*?-->', '', source, flags=re.S)
+
+              for m in re.finditer(r'(?:href|src)="([^"]*)"', vivant):
+                  cible = m.group(1).strip()
+                  if not cible or cible.startswith(EXTERNES):
+                      continue
+                  # Un chemin absolu casserait le site servi depuis un sous-dossier
+                  # (https://<compte>.github.io/<dépôt>/).
+                  if cible.startswith('/'):
+                      print(f'::error file={page}::Chemin absolu : {cible} — utiliser un chemin relatif')
+                      casse = 1
+                      continue
+                  fichier = cible.split('#')[0].split('?')[0]
+                  if fichier and not os.path.exists(fichier):
+                      print(f'::error file={page}::Cible introuvable : {cible}')
+                      casse = 1
+
+          if casse:
+              sys.exit(1)
+          print('Tous les liens et ressources internes sont relatifs et résolus.')
+          PY
+
+  deployer:
+    name: Déployer sur GitHub Pages
+    needs: verifier
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      # actions/configure-pages échoue avec un message obscur quand Pages n'est
+      # pas activé. Ce contrôle préalable dit exactement quoi faire.
+      - name: Vérifier que GitHub Pages est activé
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          code=$(curl -sS -o /tmp/pages.json -w '%{http_code}' \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$DEPOT/pages" || echo 000)
+
+          if [ "$code" = "200" ]; then
+            echo "GitHub Pages est activé sur $DEPOT."
+            exit 0
+          fi
+
+          echo "::error::GitHub Pages n'est pas activé sur $DEPOT (réponse HTTP $code)."
+          echo "::error::1. Settings → Pages → Build and deployment → Source : choisir « GitHub Actions »."
+          echo "::error::2. Dépôt privé : Pages exige un plan GitHub Pro, Team ou Enterprise. Sur le plan gratuit, passer le dépôt en public (Settings → General → Change repository visibility)."
+          echo "::error::3. Relancer ce workflow depuis l'onglet Actions (bouton « Run workflow »)."
+          echo "Le site lui-même est vérifié et prêt : seule l'activation de Pages manque."
+          exit 1
+
+      - name: Configurer GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Assembler le site
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='_site/' \
+            --exclude='README.md' \
+            ./ _site/
+          echo "Contenu publié :"
+          find _site -type f | sort
+
+      - name: Téléverser l'artefact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Déployer
+        id: deploiement
+        uses: actions/deploy-pages@v4

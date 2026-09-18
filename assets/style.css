@@ -1,0 +1,798 @@
+/* ==========================================================================
+   Éclats et Saveurs — feuille de styles partagée
+   Palette, typographie et composants. Tous les tokens sont définis dans :root.
+   ========================================================================== */
+
+:root {
+  /* --- Couleurs de marque ------------------------------------------------ */
+  --indigo:        #1B2A4A;  /* indigo profond — bandes de marque */
+  --indigo-nuit:   #12203A;  /* indigo nuit — pied de page */
+  --ivoire:        #F7F1E6;  /* fond clair principal */
+  --encre:         #201C1C;  /* texte principal */
+  --or:            #C89B3C;  /* or épicé — filets, bordures, motifs */
+  --hibiscus:      #A32638;  /* accent fort — CTA principal UNIQUEMENT */
+  --feuille:       #4C6B4F;  /* accent discret — pôle Cuisine uniquement */
+
+  /* --- Variantes de service ---------------------------------------------- */
+  /* L'or à 2,28:1 sur l'ivoire est illisible en texte : cette version
+     assombrie atteint 4,77:1 et sert aux prix et aux petits libellés. */
+  --or-encre:      #8A6415;
+  --hibiscus-fonce:#8A1F2E;  /* état survol du CTA */
+  --feuille-fonce: #3C563F;
+
+  /* --- Neutres, teintés vers l'ivoire plutôt que gris purs --------------- */
+  --ivoire-creux:  #EFE6D4;  /* surfaces en léger retrait */
+  --ivoire-filet:  #DFD2BA;  /* filets et séparateurs sur fond clair */
+  --encre-douce:   #5A5049;  /* texte secondaire — 6,98:1 sur ivoire */
+  --indigo-filet:  #33456B;  /* filets sur fond indigo */
+  --ivoire-attenue:#D8CEBE;  /* texte secondaire sur fond indigo */
+
+  /* --- Typographie ------------------------------------------------------- */
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --texte:   "Work Sans", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+
+  /* Échelle basée sur 18px, ratio ~1,25, fluide entre 375px et 1280px */
+  --t-xs:   0.78rem;
+  --t-s:    0.89rem;
+  --t-base: 1rem;
+  --t-m:    clamp(1.13rem, 1.02rem + 0.4vw, 1.27rem);
+  --t-l:    clamp(1.35rem, 1.18rem + 0.7vw, 1.6rem);
+  --t-xl:   clamp(1.6rem, 1.3rem + 1.3vw, 2.1rem);
+  --t-2xl:  clamp(1.95rem, 1.45rem + 2.1vw, 2.9rem);
+  --t-3xl:  clamp(2.3rem, 1.5rem + 3.4vw, 3.9rem);
+
+  /* --- Rythme vertical --------------------------------------------------- */
+  --e-1: 0.25rem;
+  --e-2: 0.5rem;
+  --e-3: 0.75rem;
+  --e-4: 1rem;
+  --e-5: 1.5rem;
+  --e-6: 2rem;
+  --e-7: 3rem;
+  --e-8: 4.5rem;
+  --e-9: 6rem;
+
+  --largeur:   1120px;
+  --largeur-texte: 68ch;   /* < 80 caractères par ligne */
+  --gouttiere: 1.5rem;
+
+  color-scheme: light;
+}
+
+/* La frise de losanges, inspirée des textiles africains. Utilisée avec
+   parcimonie : uniquement à l'entrée des bandes indigo. */
+:root {
+  --frise-or: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='12' viewBox='0 0 26 12'%3E%3Cpath d='M13 1.4 17.6 6 13 10.6 8.4 6Z' fill='none' stroke='%23C89B3C' stroke-width='1'/%3E%3Cpath d='M0 6h7.2M18.8 6H26' stroke='%23C89B3C' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   Remise à zéro
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ivoire);
+  color: var(--encre);
+  font-family: var(--texte);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { max-width: 100%; height: auto; }
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.12;
+  text-wrap: balance;
+  font-variation-settings: "SOFT" 20, "WONK" 1;
+}
+
+h1 { font-size: var(--t-3xl); font-weight: 900; letter-spacing: -0.015em; }
+h2 { font-size: var(--t-2xl); letter-spacing: -0.01em; }
+h3 { font-size: var(--t-l); }
+h4 { font-size: var(--t-m); font-family: var(--texte); font-weight: 600; line-height: 1.35; }
+
+p { margin: 0; max-width: var(--largeur-texte); }
+
+a { color: inherit; }
+
+ul, ol { margin: 0; padding: 0; }
+
+button { font: inherit; color: inherit; }
+
+/* Focus clavier visible partout, y compris sur fond indigo. */
+:focus-visible {
+  outline: 3px solid var(--or);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+.saut-contenu {
+  position: absolute;
+  left: var(--e-4);
+  top: 0;
+  z-index: 60;
+  padding: var(--e-2) var(--e-4);
+  background: var(--hibiscus);
+  color: var(--ivoire);
+  font-size: var(--t-s);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-120%);
+}
+.saut-contenu:focus-visible { transform: translateY(0); }
+
+/* ==========================================================================
+   Structure
+   ========================================================================== */
+
+.enveloppe {
+  width: 100%;
+  max-width: var(--largeur);
+  margin-inline: auto;
+  padding-inline: var(--gouttiere);
+}
+
+.section { padding-block: var(--e-8); }
+.section--serre { padding-block: var(--e-7); }
+
+.pile { display: flex; flex-direction: column; }
+.pile--2 { gap: var(--e-2); }
+.pile--3 { gap: var(--e-3); }
+.pile--4 { gap: var(--e-4); }
+.pile--5 { gap: var(--e-5); }
+.pile--6 { gap: var(--e-6); }
+.pile--7 { gap: var(--e-7); }
+
+.titre-section { max-width: 24ch; }
+
+.chapeau {
+  max-width: var(--largeur-texte);
+  font-size: var(--t-m);
+  color: var(--encre-douce);
+}
+
+/* ==========================================================================
+   En-tête et navigation
+   ========================================================================== */
+
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--ivoire);
+  border-bottom: 1px solid var(--ivoire-filet);
+}
+
+.entete__barre {
+  display: flex;
+  align-items: center;
+  gap: var(--e-4);
+  min-height: 4.5rem;
+  padding-block: var(--e-3);
+}
+
+/* Verrouillage du logo : le signe en SVG, le nom en texte vivant. Garder le nom
+   en texte plutôt qu'en image le rend sélectionnable, lisible par les lecteurs
+   d'écran et net à toutes les résolutions. */
+.logo {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+}
+
+.logo__signe {
+  flex: 0 0 auto;
+  width: 2.05rem;
+  height: 2.05rem;
+}
+
+.logo__mot {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  font-variation-settings: "SOFT" 20, "WONK" 1;
+}
+
+.nav { margin-left: auto; }
+
+.nav__liste {
+  display: flex;
+  align-items: center;
+  gap: 1.125rem;
+  list-style: none;
+}
+
+.nav__lien {
+  display: inline-block;
+  padding-block: var(--e-1);
+  border-bottom: 2px solid transparent;
+  font-size: var(--t-s);
+  font-weight: 500;
+  text-decoration: none;
+}
+.nav__lien:hover { border-bottom-color: var(--or); }
+
+/* Page courante : signalée par la couleur ET le filet, pas par la couleur seule. */
+.nav__lien[aria-current="page"] {
+  border-bottom-color: var(--or);
+  color: var(--or-encre);
+  font-weight: 600;
+}
+
+.bascule-menu {
+  display: none;
+  margin-left: auto;
+  padding: var(--e-2);
+  background: none;
+  border: 1px solid var(--ivoire-filet);
+  cursor: pointer;
+}
+.bascule-menu__barres { display: block; width: 22px; height: 14px; position: relative; }
+.bascule-menu__barres::before,
+.bascule-menu__barres::after,
+.bascule-menu__barres span {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--encre);
+}
+.bascule-menu__barres::before { top: 0; }
+.bascule-menu__barres span { top: 6px; }
+.bascule-menu__barres::after { bottom: 0; }
+
+/* ==========================================================================
+   Boutons
+   ========================================================================== */
+
+.bouton {
+  display: inline-block;
+  padding: 0.7rem 1.4rem;
+  border: 1.5px solid transparent;
+  font-family: var(--texte);
+  font-size: var(--t-s);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+/* Rouge hibiscus : réservé au CTA principal « Réserver ». */
+.bouton--reserver {
+  background: var(--hibiscus);
+  color: var(--ivoire);
+}
+.bouton--reserver:hover { background: var(--hibiscus-fonce); }
+
+/* Sur fond indigo, hibiscus/indigo ne fait que 1,96:1 : le filet or (5,56:1)
+   rend le bord du bouton perceptible. */
+.bande .bouton--reserver { border-color: var(--or); }
+
+.bouton--contour {
+  background: transparent;
+  border-color: var(--encre);
+  color: var(--encre);
+}
+.bouton--contour:hover { background: var(--encre); color: var(--ivoire); }
+
+.bande .bouton--contour { border-color: var(--ivoire-attenue); color: var(--ivoire); }
+.bande .bouton--contour:hover { background: var(--ivoire); color: var(--indigo); }
+
+.groupe-boutons { display: flex; flex-wrap: wrap; gap: var(--e-3); }
+
+/* ==========================================================================
+   Frise et bandes indigo
+   ========================================================================== */
+
+.frise {
+  height: 12px;
+  background-image: var(--frise-or);
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+.bande {
+  background: var(--indigo);
+  color: var(--ivoire);
+}
+.bande p { color: var(--ivoire-attenue); }
+.bande a:not(.bouton) { color: var(--ivoire); text-decoration-color: var(--or); }
+
+/* ==========================================================================
+   Héros
+   ========================================================================== */
+
+.heros { padding-block: var(--e-8) var(--e-7); }
+
+.heros__contenu { display: flex; flex-direction: column; gap: var(--e-5); max-width: 46rem; }
+
+.heros__accroche { font-size: var(--t-m); color: var(--encre-douce); }
+
+/* Unique moment de motion de la page : une apparition au chargement, depuis un
+   état déjà visible, jamais déclenchée au scroll. */
+@media (prefers-reduced-motion: no-preference) {
+  .heros__contenu > * { animation: monter 450ms cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+  .heros__contenu > :nth-child(1) { animation-delay: 40ms; }
+  .heros__contenu > :nth-child(2) { animation-delay: 110ms; }
+  .heros__contenu > :nth-child(3) { animation-delay: 180ms; }
+  .heros__contenu > :nth-child(4) { animation-delay: 250ms; }
+}
+@keyframes monter {
+  from { opacity: 0.001; transform: translateY(0.55rem); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ==========================================================================
+   Blocs d'offre — filet vertical coloré plutôt que carte à ombre grise
+   ========================================================================== */
+
+.grille-poles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: var(--e-6) var(--e-7);
+  align-items: stretch;
+}
+
+.pole {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-3);
+  padding-left: var(--e-5);
+  border-left: 3px solid var(--ivoire-filet);
+}
+.pole--cuisine    { border-left-color: var(--feuille); }
+.pole--aide       { border-left-color: var(--indigo); }
+.pole--decoration { border-left-color: var(--or); }
+
+.pole__titre { font-family: var(--display); font-size: var(--t-l); font-weight: 600; }
+.pole__depart {
+  margin-top: auto;
+  font-size: var(--t-s);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--or-encre);
+}
+.pole__lien {
+  align-self: start;
+  font-size: var(--t-s);
+  font-weight: 600;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+/* Bloc de service (pages intérieures) */
+.offre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-4);
+  padding-left: var(--e-5);
+  border-left: 3px solid var(--or);
+}
+.offre--feuille { border-left-color: var(--feuille); }
+.offre--indigo  { border-left-color: var(--indigo); }
+
+.tarif {
+  font-family: var(--display);
+  font-size: var(--t-l);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--or-encre);
+}
+.tarif small { font-family: var(--texte); font-size: var(--t-s); font-weight: 500; color: var(--encre-douce); }
+
+.signature {
+  font-family: var(--display);
+  font-size: var(--t-base);
+  font-style: italic;
+  font-weight: 600;
+  font-variation-settings: "SOFT" 60, "WONK" 1;
+  color: var(--or-encre);
+}
+.bande .signature { color: var(--or); }
+
+/* ==========================================================================
+   Listes
+   ========================================================================== */
+
+.liste-puces { list-style: none; display: flex; flex-direction: column; gap: var(--e-2); }
+.liste-puces li { position: relative; padding-left: 1.6rem; }
+.liste-puces li::before {
+  content: "";
+  position: absolute;
+  left: 0.25rem;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  background: var(--or);
+  transform: rotate(45deg);
+}
+.bande .liste-puces li::before { background: var(--or); }
+
+.liste-puces--colonnes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--e-2) var(--e-5);
+}
+
+.liste-etiquettes { list-style: none; display: flex; flex-wrap: wrap; gap: var(--e-2); }
+.liste-etiquettes li {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--ivoire-filet);
+  background: var(--ivoire-creux);
+  font-size: var(--t-s);
+}
+
+/* ==========================================================================
+   Galerie d'illustrations
+   Le conteneur impose un carré : une vraie photo déposée à la place de
+   l'illustration se recadre proprement, sans retoucher le CSS.
+   ========================================================================== */
+
+.galerie {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--e-5);
+  list-style: none;
+}
+
+.galerie figure { margin: 0; display: flex; flex-direction: column; gap: var(--e-3); }
+
+.galerie img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 100%;
+  object-fit: cover;
+  border: 1px solid var(--ivoire-filet);
+}
+
+.galerie figcaption { font-size: var(--t-s); color: var(--encre-douce); }
+
+.galerie--large { grid-template-columns: minmax(0, 22rem); }
+
+/* ==========================================================================
+   Tableaux de tarifs — lisibilité avant décoration
+   ========================================================================== */
+
+.tableau-enveloppe { overflow-x: auto; }
+
+.tarifs {
+  width: 100%;
+  min-width: 0;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.tarifs caption {
+  margin-bottom: var(--e-3);
+  font-size: var(--t-s);
+  color: var(--encre-douce);
+  text-align: left;
+}
+
+.tarifs th, .tarifs td {
+  padding: 0.7rem 1rem 0.7rem 0;
+  border-bottom: 1px solid var(--ivoire-filet);
+  vertical-align: baseline;
+}
+
+.tarifs thead th {
+  border-bottom: 2px solid var(--or);
+  font-family: var(--texte);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--encre-douce);
+  white-space: nowrap;
+}
+
+.tarifs tbody th { font-weight: 500; }
+
+.tarifs .prix {
+  width: 1%;
+  padding-right: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: right;
+  color: var(--or-encre);
+}
+
+.tarifs tbody tr:last-child th,
+.tarifs tbody tr:last-child td { border-bottom: 0; }
+
+/* ==========================================================================
+   Forfaits décoration — comparables côte à côte
+   ========================================================================== */
+
+.grille-forfaits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--e-5);
+  align-items: stretch;
+}
+
+.forfait {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-4);
+  padding: var(--e-5);
+  background: var(--ivoire-creux);
+  border-top: 3px solid var(--or);
+}
+
+.forfait__nom { font-family: var(--display); font-size: var(--t-l); font-weight: 600; }
+.forfait__prix {
+  font-size: var(--t-m);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--or-encre);
+}
+.forfait .liste-puces { margin-bottom: auto; }
+
+/* ==========================================================================
+   Encart d'information mise en évidence (acompte de 30 %)
+   ========================================================================== */
+
+.encart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-3);
+  padding: var(--e-5);
+  background: var(--ivoire-creux);
+  border: 2px solid var(--hibiscus);
+}
+.encart__titre {
+  font-family: var(--texte);
+  font-size: var(--t-s);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--hibiscus);
+}
+.encart strong { font-weight: 600; }
+
+/* ==========================================================================
+   Citation de marque
+   ========================================================================== */
+
+.marque { display: flex; flex-direction: column; gap: var(--e-6); }
+
+.marque__titre { font-size: var(--t-2xl); }
+
+.marque__trio {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--e-5) var(--e-6);
+  list-style: none;
+  border-top: 1px solid var(--indigo-filet);
+  padding-top: var(--e-5);
+}
+.marque__mot {
+  display: block;
+  margin-bottom: var(--e-2);
+  font-family: var(--display);
+  font-size: var(--t-m);
+  font-weight: 600;
+  color: var(--or);
+}
+
+/* ==========================================================================
+   Formulaire
+   ========================================================================== */
+
+.contact-grille {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: var(--e-7) var(--e-8);
+  align-items: start;
+}
+
+.formulaire { display: flex; flex-direction: column; gap: var(--e-5); }
+
+/* Champ piège pour les robots : retiré de la mise en page et du parcours. */
+.piege-robots { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.champ { display: flex; flex-direction: column; gap: var(--e-2); }
+
+.champ label { font-size: var(--t-s); font-weight: 600; }
+.champ__aide { font-size: var(--t-xs); color: var(--encre-douce); }
+
+.champ input,
+.champ select,
+.champ textarea {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  background: #FFFDF8;
+  border: 1.5px solid var(--ivoire-filet);
+  color: var(--encre);
+  font: inherit;
+  font-size: var(--t-base);
+}
+.champ textarea { min-height: 8rem; resize: vertical; }
+.champ input:hover, .champ select:hover, .champ textarea:hover { border-color: var(--encre-douce); }
+.champ input:focus-visible, .champ select:focus-visible, .champ textarea:focus-visible { border-color: var(--indigo); }
+
+.champ--invalide input,
+.champ--invalide select,
+.champ--invalide textarea { border-color: var(--hibiscus); }
+
+.champ__erreur { font-size: var(--t-xs); font-weight: 600; color: var(--hibiscus); }
+
+.requis { color: var(--hibiscus); }
+
+.paire-champs { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--e-5); }
+
+.formulaire__message {
+  padding: var(--e-4);
+  border-left: 3px solid var(--feuille);
+  background: var(--ivoire-creux);
+  font-size: var(--t-s);
+}
+.formulaire__message--erreur { border-left-color: var(--hibiscus); }
+
+.coordonnees {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-5);
+  padding: var(--e-5);
+  background: var(--ivoire-creux);
+  border-top: 3px solid var(--indigo);
+}
+
+.coordonnees dl { margin: 0; display: flex; flex-direction: column; gap: var(--e-4); }
+.coordonnees dt {
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--encre-douce);
+}
+.coordonnees dd { margin: var(--e-1) 0 0; font-weight: 500; }
+.coordonnees a { text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+/* ==========================================================================
+   Pied de page
+   ========================================================================== */
+
+.pied {
+  background: var(--indigo-nuit);
+  color: var(--ivoire);
+  padding-block: var(--e-7) var(--e-5);
+}
+
+.pied__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--e-6);
+}
+
+.pied__titre {
+  margin-bottom: var(--e-3);
+  font-family: var(--texte);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--or);
+}
+
+.pied ul { list-style: none; display: flex; flex-direction: column; gap: var(--e-2); }
+.pied a { color: var(--ivoire); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.pied p { color: var(--ivoire-attenue); font-size: var(--t-s); }
+.pied li { font-size: var(--t-s); }
+
+.pied__bas {
+  margin-top: var(--e-6);
+  padding-top: var(--e-4);
+  border-top: 1px solid var(--indigo-filet);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2) var(--e-5);
+  justify-content: space-between;
+  font-size: var(--t-xs);
+  color: var(--ivoire-attenue);
+}
+
+/* ==========================================================================
+   Adaptations mobiles
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .contact-grille { grid-template-columns: 1fr; }
+}
+
+/* La navigation bureau complète (marque + 5 rubriques + CTA) réclame ~1029px.
+   Le hamburger couvre donc toute la plage en dessous : à 768px, une nav en
+   ligne déborderait de l'écran. */
+@media (max-width: 1023px) {
+  .bascule-menu { display: block; }
+
+  .nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-left: 0;
+    background: var(--ivoire);
+    border-bottom: 1px solid var(--ivoire-filet);
+    box-shadow: 0 14px 28px -20px rgba(18, 32, 58, 0.55);
+  }
+  .nav[hidden] { display: none; }
+
+  .nav__liste {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--e-2) var(--gouttiere) var(--e-5);
+  }
+  .nav__liste > li { border-bottom: 1px solid var(--ivoire-filet); }
+  .nav__liste > li:last-child { border-bottom: 0; padding-top: var(--e-4); }
+
+  .nav__lien { display: block; padding-block: var(--e-3); border-bottom: 0; }
+  .nav__lien[aria-current="page"] { border-bottom: 0; }
+  .nav .bouton--reserver { display: block; }
+}
+
+@media (max-width: 767px) {
+  :root { --gouttiere: 1rem; }
+
+  .section { padding-block: var(--e-7); }
+  .heros { padding-block: var(--e-7) var(--e-6); }
+}
+
+@media (max-width: 420px) {
+  .logo__mot { font-size: 1.12rem; }
+  .logo__signe { width: 1.75rem; height: 1.75rem; }
+  .entete__barre { gap: var(--e-3); }
+}
+
+/* Sous 560px les tableaux de tarifs passent en liste empilée : chaque cellule
+   reprend l'intitulé de sa colonne via data-etiquette. */
+@media (max-width: 559px) {
+  .tarifs thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  .tarifs tbody tr {
+    display: block;
+    padding-block: var(--e-3);
+    border-bottom: 1px solid var(--ivoire-filet);
+  }
+  .tarifs tbody tr:last-child { border-bottom: 0; }
+
+  .tarifs tbody th,
+  .tarifs tbody td {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--e-4);
+    padding: 0.15rem 0;
+    border-bottom: 0;
+    text-align: left;
+  }
+
+  .tarifs tbody th { font-family: var(--display); font-size: var(--t-m); font-weight: 600; }
+
+  .tarifs tbody td::before {
+    content: attr(data-etiquette);
+    flex: 0 0 auto;
+    font-size: var(--t-xs);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--encre-douce);
+  }
+
+  .tarifs .prix { width: auto; text-align: left; }
+}

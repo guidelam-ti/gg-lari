@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="t d">
+  <title id="t">Assiette servie vue de dessus</title>
+  <desc id="d">Illustration bichrome : une assiette partagée entre un légume vert, une sauce dorée et un accompagnement clair.</desc>
+
+  <rect width="200" height="200" fill="#EFE6D4"/>
+  <circle cx="100" cy="100" r="82" fill="#F7F1E6"/>
+  <circle cx="100" cy="100" r="74" fill="none" stroke="#1B2A4A" stroke-width="3"/>
+  <path d="M100 100 L100 36 A64 64 0 0 1 155 132 Z" fill="#4C6B4F"/>
+  <path d="M100 100 L155 132 A64 64 0 0 1 45 132 Z" fill="#C89B3C"/>
+  <path d="M100 100 L45 132 A64 64 0 0 1 100 36 Z" fill="#12203A"/>
+  <ellipse cx="118" cy="62" rx="7" ry="4" fill="#3C563F" transform="rotate(-28 118 62)"/>
+  <ellipse cx="132" cy="84" rx="7" ry="4" fill="#3C563F" transform="rotate(-28 132 84)"/>
+  <ellipse cx="112" cy="88" rx="7" ry="4" fill="#3C563F" transform="rotate(-28 112 88)"/>
+  <ellipse cx="128" cy="108" rx="7" ry="4" fill="#3C563F" transform="rotate(-28 128 108)"/>
+  <path d="M107.5 140.7 L97.3 145.5 L92.5 135.3 L102.7 130.5Z" fill="#A87F28"/>
+  <path d="M85.5 128.7 L75.3 133.5 L70.5 123.3 L80.7 118.5Z" fill="#A87F28"/>
+  <path d="M129.5 128.7 L119.3 133.5 L114.5 123.3 L124.7 118.5Z" fill="#A87F28"/>
+  <ellipse cx="70" cy="84" rx="9" ry="5.5" fill="#F7F1E6" opacity="0.9" transform="rotate(-20 70 84)"/>
+  <ellipse cx="62" cy="104" rx="9" ry="5.5" fill="#F7F1E6" opacity="0.9" transform="rotate(15 62 104)"/>
+  <ellipse cx="80" cy="104" rx="9" ry="5.5" fill="#F7F1E6" opacity="0.9" transform="rotate(-40 80 104)"/>
+  <circle cx="100" cy="100" r="82" fill="none" stroke="#C89B3C" stroke-width="2"/>
+</svg>

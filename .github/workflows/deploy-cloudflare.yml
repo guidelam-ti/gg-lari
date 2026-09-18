@@ -1,0 +1,72 @@
+# Déploiement alternatif à GitHub Pages.
+#
+# Cloudflare Pages accepte les dépôts privés sur l'offre gratuite, sans limite
+# de bande passante, avec un domaine personnalisé et un certificat gratuits.
+# C'est l'option la plus rapide à l'affichage, mais elle ne gère pas les
+# formulaires : le formulaire de contact reste branché sur Formspree ou sur le
+# repli mailto.
+#
+# Deux secrets à créer dans Settings → Secrets and variables → Actions :
+#   CLOUDFLARE_API_TOKEN   jeton avec la permission « Cloudflare Pages — Edit »
+#   CLOUDFLARE_ACCOUNT_ID  identifiant de compte (tableau de bord Cloudflare)
+# Une variable facultative CLOUDFLARE_PROJECT_NAME permet de changer le nom du
+# projet Pages ; sans elle, « eclats-et-saveurs » est utilisé.
+
+name: Déployer le site sur Cloudflare Pages
+
+# GitHub Pages a été retenu comme hébergeur : ce workflow ne se déclenche donc
+# plus automatiquement, pour ne pas encombrer l'onglet Actions à chaque push.
+# Il reste lançable à la main depuis Actions → « Run workflow » si Cloudflare Pages
+# devient un jour préférable.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deployer:
+    name: Déployer sur Cloudflare Pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Les secrets Cloudflare sont-ils présents ?
+        id: secrets
+        env:
+          JETON: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          COMPTE: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$JETON" ] && [ -n "$COMPTE" ]; then
+            echo "configure=true" >> "$GITHUB_OUTPUT"
+            echo "Secrets Cloudflare présents, le déploiement va suivre."
+          else
+            echo "configure=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare Pages n'est pas configuré, déploiement ignoré. Pour l'activer, créer les secrets CLOUDFLARE_API_TOKEN et CLOUDFLARE_ACCOUNT_ID dans Settings → Secrets and variables → Actions."
+          fi
+
+      - name: Assembler le site
+        if: steps.secrets.outputs.configure == 'true'
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='_site/' \
+            --exclude='README.md' \
+            ./ _site/
+
+      - name: Déployer
+        if: steps.secrets.outputs.configure == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy _site
+            --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || 'eclats-et-saveurs' }}
+            --branch=${{ github.ref_name }}
