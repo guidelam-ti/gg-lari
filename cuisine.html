@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nos repas et notre cuisine à domicile — Éclats et Saveurs</title>
+  <meta name="description" content="Packs de marmites camerounaises et africaines de 250 $ à 700 $ : ndolé, eru, okok, taro, sauce d’arachide. Cuisine chez le client à partir de 35 $/heure, et service tout compris courses + cuisine.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,600&family=Work+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+  <!-- EN-TÊTE PARTAGÉ — identique sur les 5 pages. Toute modification de la
+       navigation doit être reportée dans chacune d'elles. -->
+  <header class="entete">
+    <div class="enveloppe entete__barre">
+      <!-- TODO: pour remplacer le logo texte par un fichier image, substituer le
+           contenu de ce lien par <img src="assets/img/logo.svg" alt="Éclats et Saveurs"> -->
+      <a class="logo" href="index.html">Éclats et Saveurs<span>Cuisine · Aide à domicile · Événements</span></a>
+
+      <button class="bascule-menu" type="button" data-bascule-menu
+              aria-expanded="false" aria-controls="navigation-principale"
+              aria-label="Ouvrir le menu de navigation">
+        <span class="bascule-menu__barres"><span></span></span>
+      </button>
+
+      <nav class="nav" id="navigation-principale" data-nav aria-label="Navigation principale">
+        <ul class="nav__liste">
+          <li><a class="nav__lien" href="index.html">Accueil</a></li>
+          <li><a class="nav__lien" href="cuisine.html" aria-current="page">Cuisine</a></li>
+          <li><a class="nav__lien" href="aide-a-domicile.html">Aide à domicile</a></li>
+          <li><a class="nav__lien" href="decoration-evenements.html">Décoration & Événements</a></li>
+          <li><a class="nav__lien" href="contact.html">Contact</a></li>
+          <li><a class="bouton bouton--reserver" href="contact.html">Réserver</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section class="heros">
+      <div class="enveloppe heros__contenu">
+        <h1>Des repas faits maison, préparés avec soin.</h1>
+        <p class="heros__accroche">Cuisine camerounaise et africaine, ouverte à toutes les cultures
+          et à toutes les préférences. D’autres plats peuvent être commandés sur demande.</p>
+      </div>
+    </section>
+
+    <section class="section--serre">
+      <div class="enveloppe pile pile--6">
+        <h2 class="titre-section">Nos packs de marmites</h2>
+
+        <!-- TODO: photo — une marmite ou un plat dressé viendrait naturellement ici -->
+
+        <div class="tableau-enveloppe">
+          <table class="tarifs">
+            <caption>Prix de base par marmite. Les prix peuvent varier selon la viande, le poisson,
+              les légumes et les accompagnements choisis.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Plat</th>
+                <th scope="col">Quantité</th>
+                <th scope="col" class="prix">Prix de base</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Sauce tomate</th><td data-etiquette="Quantité">2,5 L / ~10 personnes</td><td class="prix" data-etiquette="Prix de base">300 $</td></tr>
+              <tr><th scope="row">Sauce d’arachide</th><td data-etiquette="Quantité">~10 personnes</td><td class="prix" data-etiquette="Prix de base">400 $</td></tr>
+              <tr><th scope="row">Ndolé</th><td data-etiquette="Quantité">~10 personnes</td><td class="prix" data-etiquette="Prix de base">500 $</td></tr>
+              <tr><th scope="row">Eru</th><td data-etiquette="Quantité">~10 personnes</td><td class="prix" data-etiquette="Prix de base">500 $</td></tr>
+              <tr><th scope="row">Okok</th><td data-etiquette="Quantité">~10 personnes</td><td class="prix" data-etiquette="Prix de base">500 $</td></tr>
+              <tr><th scope="row">Épinards</th><td data-etiquette="Quantité">~10 personnes</td><td class="prix" data-etiquette="Prix de base">250 $</td></tr>
+              <tr><th scope="row">Taro</th><td data-etiquette="Quantité">~10 personnes</td><td class="prix" data-etiquette="Prix de base">700 $</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section--serre">
+      <div class="enveloppe pile pile--4">
+        <h2 class="titre-section">Accompagnements</h2>
+        <ul class="liste-etiquettes">
+          <li>Frites de plantain</li>
+          <li>Frites de pommes de terre</li>
+          <li>Riz</li>
+          <li>Couscous</li>
+          <li>Fufu</li>
+          <li>Légumes</li>
+          <li>Autres accompagnements sur demande</li>
+        </ul>
+        <p>D’autres plats peuvent être préparés selon vos préférences, vos besoins et votre
+           budget. Les prix peuvent varier selon la viande, le poisson, les légumes et les
+           accompagnements choisis.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="enveloppe pile pile--7">
+        <article class="offre offre--feuille">
+          <h2>Cuisine chez le client</h2>
+          <p class="chapeau">Nous venons cuisiner directement chez vous.</p>
+          <ul class="liste-puces liste-puces--colonnes">
+            <li>Préparation de vos repas à domicile</li>
+            <li>Préparation d’un ou plusieurs plats</li>
+            <li>Possibilité de faire les courses</li>
+            <li>Préparation des accompagnements</li>
+            <li>Nettoyage de la cuisine après préparation</li>
+          </ul>
+          <p class="tarif">À partir de 35 $/heure <small>tarif à discuter selon vos besoins</small></p>
+          <div class="pile pile--2">
+            <h3>Le tarif varie selon</h3>
+            <ul class="liste-puces liste-puces--colonnes">
+              <li>Le type de repas</li>
+              <li>Le niveau de préparation</li>
+              <li>La quantité</li>
+              <li>Les ingrédients fournis par le client ou non</li>
+              <li>Le type de service demandé</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="offre offre--feuille">
+          <h2>Courses et cuisine</h2>
+          <p class="chapeau">On s’occupe de tout pour vous.</p>
+          <ul class="liste-puces liste-puces--colonnes">
+            <li>Choix des repas</li>
+            <li>Achat des ingrédients</li>
+            <li>Préparation des repas</li>
+            <li>Préparation de plusieurs repas</li>
+            <li>Nettoyage après préparation</li>
+          </ul>
+          <p class="tarif">Tarif personnalisé <small>selon la commande</small></p>
+          <p>Le coût des courses peut être facturé séparément.</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="frise" aria-hidden="true"></div>
+
+    <section class="section bande">
+      <div class="enveloppe pile pile--5">
+        <h2 class="titre-section">Envie d’un plat en particulier ?</h2>
+        <p class="chapeau">Dites-nous ce que vous aimeriez manger, pour combien de personnes et
+           quand. Nous ajustons la marmite, les accompagnements et le tarif à votre demande.</p>
+        <div class="groupe-boutons">
+          <a class="bouton bouton--reserver" href="contact.html">Réserver un pack</a>
+          <a class="bouton bouton--contour" href="contact.html">Demander un devis</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PIED DE PAGE PARTAGÉ — identique sur les 5 pages. -->
+  <footer class="pied">
+    <div class="enveloppe">
+      <div class="pied__grille">
+        <div>
+          <p class="pied__titre">Éclats et Saveurs</p>
+          <p>Des saveurs qui rassemblent, des services qui facilitent votre quotidien
+             et des événements qui créent de beaux souvenirs.</p>
+        </div>
+
+        <div>
+          <p class="pied__titre">Nous joindre</p>
+          <ul>
+            <!-- TODO: remplacer par le vrai numéro de téléphone (href tel: inclus) -->
+            <li>Téléphone à communiquer</li>
+            <!-- TODO: remplacer par la vraie adresse de réception des réservations -->
+            <li><a href="mailto:contact@eclatsetsaveurs.example">contact@eclatsetsaveurs.example</a></li>
+            <!-- TODO: préciser la ville / région desservie -->
+            <li>Zone desservie à préciser</li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="pied__titre">Horaires et réseaux</p>
+          <ul>
+            <!-- TODO: renseigner les horaires réels -->
+            <li>Horaires à communiquer</li>
+            <!-- TODO: remplacer par les liens Facebook / Instagram s'ils existent,
+                 ou supprimer ces deux lignes -->
+            <li>Facebook à venir</li>
+            <li>Instagram à venir</li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="pied__titre">Le site</p>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="cuisine.html">Cuisine</a></li>
+            <li><a href="aide-a-domicile.html">Aide à domicile</a></li>
+            <li><a href="decoration-evenements.html">Décoration & Événements</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pied__bas">
+        <p>© 2026 Éclats et Saveurs. Tous droits réservés.</p>
+        <p>Les tarifs affichés sont des prix de base, ajustables selon votre demande.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/main.js"></script>
+</body>
+</html>

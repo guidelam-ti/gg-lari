@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact et réservation — Éclats et Saveurs</title>
+  <meta name="description" content="Réservez un pack de marmites, un forfait d’aide à domicile ou la décoration de votre événement. Dites-nous votre besoin, votre date et votre budget : nous ajustons la prestation.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,600&family=Work+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+  <!-- EN-TÊTE PARTAGÉ — identique sur les 5 pages. Toute modification de la
+       navigation doit être reportée dans chacune d'elles. -->
+  <header class="entete">
+    <div class="enveloppe entete__barre">
+      <!-- TODO: pour remplacer le logo texte par un fichier image, substituer le
+           contenu de ce lien par <img src="assets/img/logo.svg" alt="Éclats et Saveurs"> -->
+      <a class="logo" href="index.html">Éclats et Saveurs<span>Cuisine · Aide à domicile · Événements</span></a>
+
+      <button class="bascule-menu" type="button" data-bascule-menu
+              aria-expanded="false" aria-controls="navigation-principale"
+              aria-label="Ouvrir le menu de navigation">
+        <span class="bascule-menu__barres"><span></span></span>
+      </button>
+
+      <nav class="nav" id="navigation-principale" data-nav aria-label="Navigation principale">
+        <ul class="nav__liste">
+          <li><a class="nav__lien" href="index.html">Accueil</a></li>
+          <li><a class="nav__lien" href="cuisine.html">Cuisine</a></li>
+          <li><a class="nav__lien" href="aide-a-domicile.html">Aide à domicile</a></li>
+          <li><a class="nav__lien" href="decoration-evenements.html">Décoration & Événements</a></li>
+          <li><a class="nav__lien" href="contact.html" aria-current="page">Contact</a></li>
+          <li><a class="bouton bouton--reserver" href="contact.html">Réserver</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section class="heros">
+      <div class="enveloppe heros__contenu">
+        <h1>Parlons de votre demande.</h1>
+        <p class="heros__accroche">Un pack de marmites, un coup de main à domicile ou la décoration
+          d’un événement : dites-nous ce dont vous avez besoin, et nous revenons vers vous pour en
+          discuter et ajuster le tarif.</p>
+      </div>
+    </section>
+
+    <section class="section--serre">
+      <div class="enveloppe contact-grille">
+        <form class="formulaire" data-formulaire-contact novalidate>
+          <h2 class="titre-section">Votre demande</h2>
+
+          <div class="champ">
+            <label for="nom">Nom <span class="requis" aria-hidden="true">*</span></label>
+            <input type="text" id="nom" name="nom" autocomplete="name" required
+                   aria-describedby="erreur-nom">
+            <p class="champ__erreur" id="erreur-nom" data-erreur></p>
+          </div>
+
+          <div class="paire-champs">
+            <div class="champ">
+              <label for="email">Email <span class="requis" aria-hidden="true">*</span></label>
+              <input type="email" id="email" name="email" autocomplete="email" required
+                     aria-describedby="erreur-email">
+              <p class="champ__erreur" id="erreur-email" data-erreur></p>
+            </div>
+
+            <div class="champ">
+              <label for="telephone">Téléphone</label>
+              <input type="tel" id="telephone" name="telephone" autocomplete="tel"
+                     aria-describedby="erreur-telephone">
+              <p class="champ__erreur" id="erreur-telephone" data-erreur></p>
+            </div>
+          </div>
+
+          <div class="paire-champs">
+            <div class="champ">
+              <label for="service">Service souhaité <span class="requis" aria-hidden="true">*</span></label>
+              <select id="service" name="service" required aria-describedby="erreur-service">
+                <option value="">Choisissez un service</option>
+                <option value="Cuisine">Cuisine</option>
+                <option value="Aide à domicile">Aide à domicile</option>
+                <option value="Décoration &amp; Événements">Décoration &amp; Événements</option>
+                <option value="Autre">Autre</option>
+              </select>
+              <p class="champ__erreur" id="erreur-service" data-erreur></p>
+            </div>
+
+            <div class="champ">
+              <label for="date">Date souhaitée</label>
+              <input type="date" id="date" name="date" aria-describedby="aide-date erreur-date">
+              <p class="champ__aide" id="aide-date">Facultatif, même approximative.</p>
+              <p class="champ__erreur" id="erreur-date" data-erreur></p>
+            </div>
+          </div>
+
+          <div class="champ">
+            <label for="message">Message <span class="requis" aria-hidden="true">*</span></label>
+            <textarea id="message" name="message" required
+                      aria-describedby="aide-message erreur-message"></textarea>
+            <p class="champ__aide" id="aide-message">Nombre de personnes, plats ou ambiance
+              souhaités, budget envisagé : tout ce qui nous aide à vous répondre précisément.</p>
+            <p class="champ__erreur" id="erreur-message" data-erreur></p>
+          </div>
+
+          <div class="groupe-boutons">
+            <button class="bouton bouton--reserver" type="submit" data-envoyer>Envoyer ma demande</button>
+          </div>
+
+          <p class="formulaire__message" data-etat role="status" aria-live="polite" hidden></p>
+        </form>
+
+        <aside class="coordonnees">
+          <h2>Nous joindre directement</h2>
+          <dl>
+            <div>
+              <dt>Téléphone</dt>
+              <!-- TODO: remplacer par le vrai numéro et rétablir le lien tel: -->
+              <dd>À communiquer</dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <!-- TODO: remplacer par la vraie adresse de réception des réservations.
+                   Elle doit correspondre à CONTACT_EMAIL dans assets/main.js. -->
+              <dd><a href="mailto:contact@eclatsetsaveurs.example">contact@eclatsetsaveurs.example</a></dd>
+            </div>
+            <div>
+              <dt>Zone desservie</dt>
+              <!-- TODO: préciser la ville / région desservie -->
+              <dd>À préciser</dd>
+            </div>
+            <div>
+              <dt>Réseaux sociaux</dt>
+              <!-- TODO: remplacer par les liens Facebook / Instagram, ou retirer ce bloc -->
+              <dd>À venir</dd>
+            </div>
+          </dl>
+          <!-- TODO: si un délai de réponse habituel est connu, l'indiquer ici.
+               Aucun délai n'est affiché pour ne pas promettre ce qui n'est pas tenu. -->
+          <p>Les tarifs indiqués sur le site sont des prix de base. Ils s’ajustent selon les
+             quantités, les ingrédients et la prestation demandée.</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- PIED DE PAGE PARTAGÉ — identique sur les 5 pages. -->
+  <footer class="pied">
+    <div class="enveloppe">
+      <div class="pied__grille">
+        <div>
+          <p class="pied__titre">Éclats et Saveurs</p>
+          <p>Des saveurs qui rassemblent, des services qui facilitent votre quotidien
+             et des événements qui créent de beaux souvenirs.</p>
+        </div>
+
+        <div>
+          <p class="pied__titre">Nous joindre</p>
+          <ul>
+            <!-- TODO: remplacer par le vrai numéro de téléphone (href tel: inclus) -->
+            <li>Téléphone à communiquer</li>
+            <!-- TODO: remplacer par la vraie adresse de réception des réservations -->
+            <li><a href="mailto:contact@eclatsetsaveurs.example">contact@eclatsetsaveurs.example</a></li>
+            <!-- TODO: préciser la ville / région desservie -->
+            <li>Zone desservie à préciser</li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="pied__titre">Horaires et réseaux</p>
+          <ul>
+            <!-- TODO: renseigner les horaires réels -->
+            <li>Horaires à communiquer</li>
+            <!-- TODO: remplacer par les liens Facebook / Instagram s'ils existent,
+                 ou supprimer ces deux lignes -->
+            <li>Facebook à venir</li>
+            <li>Instagram à venir</li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="pied__titre">Le site</p>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="cuisine.html">Cuisine</a></li>
+            <li><a href="aide-a-domicile.html">Aide à domicile</a></li>
+            <li><a href="decoration-evenements.html">Décoration & Événements</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pied__bas">
+        <p>© 2026 Éclats et Saveurs. Tous droits réservés.</p>
+        <p>Les tarifs affichés sont des prix de base, ajustables selon votre demande.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/main.js"></script>
+</body>
+</html>

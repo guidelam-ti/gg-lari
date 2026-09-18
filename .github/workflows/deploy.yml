@@ -1,0 +1,114 @@
+name: Déployer le site sur GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - claude/static-site-github-pages-0hpvzy
+  workflow_dispatch:
+
+# Permissions minimales requises par actions/deploy-pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois, sans annuler celui déjà en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  verifier:
+    name: Vérifier les fichiers du site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Présence des fichiers attendus
+        run: |
+          manquants=0
+          for fichier in \
+            index.html \
+            cuisine.html \
+            aide-a-domicile.html \
+            decoration-evenements.html \
+            contact.html \
+            assets/style.css \
+            assets/main.js \
+            assets/favicon.svg \
+            .nojekyll
+          do
+            if [ ! -e "$fichier" ]; then
+              echo "::error file=$fichier::Fichier du site manquant"
+              manquants=1
+            fi
+          done
+          [ "$manquants" -eq 0 ] || exit 1
+          echo "Les 5 pages et leurs ressources sont présentes."
+
+      - name: Syntaxe du JavaScript
+        run: node --check assets/main.js
+
+      - name: Ressources et liens internes résolus
+        run: |
+          casse=0
+          for page in *.html; do
+            # Chaque href/src local doit correspondre à un fichier existant.
+            grep -o -E '(href|src)="[^"#:]+"' "$page" \
+              | sed -E 's/^(href|src)="//; s/"$//' \
+              | while read -r cible; do
+                  case "$cible" in
+                    ""|mailto:*|tel:*|http*) continue ;;
+                  esac
+                  if [ ! -e "$cible" ]; then
+                    echo "::error file=$page::Cible introuvable : $cible"
+                    exit 1
+                  fi
+                done || casse=1
+            # Un chemin absolu casserait le site servi depuis un sous-dossier
+            # (https://<compte>.github.io/<dépôt>/).
+            if grep -q -E '(href|src)="/[^/]' "$page"; then
+              echo "::error file=$page::Chemin absolu détecté ; utiliser des chemins relatifs"
+              casse=1
+            fi
+          done
+          [ "$casse" -eq 0 ] || exit 1
+          echo "Tous les liens et ressources internes sont relatifs et résolus."
+
+  deployer:
+    name: Déployer sur GitHub Pages
+    needs: verifier
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          # Active GitHub Pages sur le dépôt s'il ne l'est pas déjà.
+          enablement: true
+
+      - name: Assembler le site
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='_site/' \
+            --exclude='README.md' \
+            ./ _site/
+          echo "Contenu publié :"
+          find _site -type f | sort
+
+      - name: Téléverser l'artefact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Déployer
+        id: deploiement
+        uses: actions/deploy-pages@v4
