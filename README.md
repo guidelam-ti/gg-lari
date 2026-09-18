@@ -49,15 +49,26 @@ Il exécute deux tâches :
 
 ### Deux réglages à faire une seule fois
 
+Ces deux réglages ne peuvent pas être faits depuis un workflow : le jeton
+`GITHUB_TOKEN` n'a pas le droit de créer un site Pages (`Resource not
+accessible by integration`). Le workflow le détecte et affiche la marche à
+suivre plutôt que d'échouer sans explication.
+
 1. **Source de publication.** Dans **Settings → Pages → Build and deployment →
-   Source**, choisir **GitHub Actions**. Le workflow tente de l'activer seul
-   (`enablement: true`), mais le réglage manuel reste le plus fiable.
+   Source**, choisir **GitHub Actions**.
 
 2. **Dépôt privé ou public.** GitHub Pages n'est disponible sur un dépôt
    **privé** qu'avec un plan payant (GitHub Pro, Team ou Enterprise). Ce dépôt
    est actuellement privé : en plan gratuit, il faut le passer en public
    (**Settings → General → Danger Zone → Change repository visibility**) pour
    que le déploiement aboutisse.
+
+3. **Relancer le workflow.** Onglet **Actions** → « Déployer le site sur GitHub
+   Pages » → **Run workflow**, en sélectionnant la branche.
+
+Note : une poussée effectuée par une application GitHub ne déclenche pas
+toujours les workflows sur `push`. En cas de doute, lancer le workflow à la
+main depuis l'onglet Actions.
 
 ### Adresse du site
 

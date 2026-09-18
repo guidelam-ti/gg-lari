@@ -493,7 +493,7 @@ button { font: inherit; color: inherit; }
   font-variant-numeric: tabular-nums;
   color: var(--or-encre);
 }
-.forfait .liste-puces { margin-top: auto; }
+.forfait .liste-puces { margin-bottom: auto; }
 
 /* ==========================================================================
    Encart d'information mise en évidence (acompte de 30 %)

@@ -94,11 +94,32 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # actions/configure-pages échoue avec un message obscur quand Pages n'est
+      # pas activé. Ce contrôle préalable dit exactement quoi faire.
+      - name: Vérifier que GitHub Pages est activé
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          code=$(curl -sS -o /tmp/pages.json -w '%{http_code}' \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$DEPOT/pages" || echo 000)
+
+          if [ "$code" = "200" ]; then
+            echo "GitHub Pages est activé sur $DEPOT."
+            exit 0
+          fi
+
+          echo "::error::GitHub Pages n'est pas activé sur $DEPOT (réponse HTTP $code)."
+          echo "::error::1. Settings → Pages → Build and deployment → Source : choisir « GitHub Actions »."
+          echo "::error::2. Dépôt privé : Pages exige un plan GitHub Pro, Team ou Enterprise. Sur le plan gratuit, passer le dépôt en public (Settings → General → Change repository visibility)."
+          echo "::error::3. Relancer ce workflow depuis l'onglet Actions (bouton « Run workflow »)."
+          echo "Le site lui-même est vérifié et prêt : seule l'activation de Pages manque."
+          exit 1
+
       - name: Configurer GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          # Active GitHub Pages sur le dépôt s'il ne l'est pas déjà.
-          enablement: true
 
       - name: Assembler le site
         run: |
