@@ -23,7 +23,7 @@ jobs:
     name: Vérifier les fichiers du site
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Présence des fichiers attendus
         run: |
@@ -52,29 +52,37 @@ jobs:
 
       - name: Ressources et liens internes résolus
         run: |
-          casse=0
-          for page in *.html; do
-            # Chaque href/src local doit correspondre à un fichier existant.
-            grep -o -E '(href|src)="[^"#:]+"' "$page" \
-              | sed -E 's/^(href|src)="//; s/"$//' \
-              | while read -r cible; do
-                  case "$cible" in
-                    ""|mailto:*|tel:*|http*) continue ;;
-                  esac
-                  if [ ! -e "$cible" ]; then
-                    echo "::error file=$page::Cible introuvable : $cible"
-                    exit 1
-                  fi
-                done || casse=1
-            # Un chemin absolu casserait le site servi depuis un sous-dossier
-            # (https://<compte>.github.io/<dépôt>/).
-            if grep -q -E '(href|src)="/[^/]' "$page"; then
-              echo "::error file=$page::Chemin absolu détecté ; utiliser des chemins relatifs"
-              casse=1
-            fi
-          done
-          [ "$casse" -eq 0 ] || exit 1
-          echo "Tous les liens et ressources internes sont relatifs et résolus."
+          python3 - <<'PY'
+          import glob, os, re, sys
+
+          EXTERNES = ('#', 'mailto:', 'tel:', 'http://', 'https://', 'data:', '//')
+          casse = 0
+
+          for page in sorted(glob.glob('*.html')):
+              source = open(page, encoding='utf-8').read()
+              # Les commentaires HTML documentent des pistes futures (logo, photos) :
+              # ce ne sont pas des références réelles, on ne les vérifie pas.
+              vivant = re.sub(r'<!--.*?-->', '', source, flags=re.S)
+
+              for m in re.finditer(r'(?:href|src)="([^"]*)"', vivant):
+                  cible = m.group(1).strip()
+                  if not cible or cible.startswith(EXTERNES):
+                      continue
+                  # Un chemin absolu casserait le site servi depuis un sous-dossier
+                  # (https://<compte>.github.io/<dépôt>/).
+                  if cible.startswith('/'):
+                      print(f'::error file={page}::Chemin absolu : {cible} — utiliser un chemin relatif')
+                      casse = 1
+                      continue
+                  fichier = cible.split('#')[0].split('?')[0]
+                  if fichier and not os.path.exists(fichier):
+                      print(f'::error file={page}::Cible introuvable : {cible}')
+                      casse = 1
+
+          if casse:
+              sys.exit(1)
+          print('Tous les liens et ressources internes sont relatifs et résolus.')
+          PY
 
   deployer:
     name: Déployer sur GitHub Pages
@@ -84,7 +92,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deploiement.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configurer GitHub Pages
         uses: actions/configure-pages@v5
