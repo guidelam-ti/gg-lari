@@ -88,17 +88,25 @@ le nom du projet, qui vaut `eclats-et-saveurs` par défaut.
 
 ## Déploiement sur GitHub Pages
 
-Le workflow `.github/workflows/deploy.yml` se déclenche à chaque push sur `main`
-ou sur `claude/static-site-github-pages-0hpvzy`, et peut aussi être lancé à la
-main depuis l'onglet **Actions** (bouton « Run workflow »).
-
-Il exécute deux tâches :
+Le workflow `.github/workflows/deploy.yml` exécute deux tâches :
 
 1. **Vérifier** — présence des 5 pages et de leurs ressources, syntaxe du
    JavaScript, et contrôle que tous les liens et ressources internes existent et
-   sont bien en chemin *relatif*.
+   sont bien en chemin *relatif*. Tourne sur `main` **et sur chaque pull
+   request**, de sorte qu'un lien cassé est détecté avant la fusion.
 2. **Déployer** — assemble le site dans `_site/` (en excluant `.git`, `.github`
-   et ce README), puis publie via `actions/deploy-pages`.
+   et ce README), puis publie via `actions/deploy-pages`. **Ne tourne que sur
+   `main`.**
+
+Pourquoi seul `main` publie : l'environnement `github-pages` n'autorise les
+déploiements que depuis la branche par défaut, et Pages n'héberge de toute façon
+qu'une seule version du site. Publier depuis une branche de travail écraserait
+le site en ligne avec du code non relu — et échouerait de toute manière sur
+`Branch … is not allowed to deploy to github-pages`.
+
+Le workflow peut aussi être lancé à la main depuis l'onglet **Actions**
+(« Run workflow ») ; lancé depuis une autre branche que `main`, il vérifie sans
+publier.
 
 ### Les deux réglages initiaux (déjà faits)
 
