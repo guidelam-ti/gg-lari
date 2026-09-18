@@ -181,18 +181,32 @@ button { font: inherit; color: inherit; }
   padding-block: var(--e-3);
 }
 
-/* Logo texte. Remplaçable par une image : voir README, section « Logo ». */
+/* Verrouillage du logo : le signe en SVG, le nom en texte vivant. Garder le nom
+   en texte plutôt qu'en image le rend sélectionnable, lisible par les lecteurs
+   d'écran et net à toutes les résolutions. */
 .logo {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+}
+
+.logo__signe {
+  flex: 0 0 auto;
+  width: 2.05rem;
+  height: 2.05rem;
+}
+
+.logo__mot {
   font-family: var(--display);
   font-size: 1.3rem;
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.015em;
-  text-decoration: none;
+  white-space: nowrap;
   font-variation-settings: "SOFT" 20, "WONK" 1;
 }
-.logo span { display: block; color: var(--or-encre); font-size: 0.62em; font-weight: 600; letter-spacing: 0.01em; }
 
 .nav { margin-left: auto; }
 
@@ -383,6 +397,16 @@ button { font: inherit; color: inherit; }
 }
 .tarif small { font-family: var(--texte); font-size: var(--t-s); font-weight: 500; color: var(--encre-douce); }
 
+.signature {
+  font-family: var(--display);
+  font-size: var(--t-base);
+  font-style: italic;
+  font-weight: 600;
+  font-variation-settings: "SOFT" 60, "WONK" 1;
+  color: var(--or-encre);
+}
+.bande .signature { color: var(--or); }
+
 /* ==========================================================================
    Listes
    ========================================================================== */
@@ -414,6 +438,34 @@ button { font: inherit; color: inherit; }
   background: var(--ivoire-creux);
   font-size: var(--t-s);
 }
+
+/* ==========================================================================
+   Galerie d'illustrations
+   Le conteneur impose un carré : une vraie photo déposée à la place de
+   l'illustration se recadre proprement, sans retoucher le CSS.
+   ========================================================================== */
+
+.galerie {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--e-5);
+  list-style: none;
+}
+
+.galerie figure { margin: 0; display: flex; flex-direction: column; gap: var(--e-3); }
+
+.galerie img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 100%;
+  object-fit: cover;
+  border: 1px solid var(--ivoire-filet);
+}
+
+.galerie figcaption { font-size: var(--t-s); color: var(--encre-douce); }
+
+.galerie--large { grid-template-columns: minmax(0, 22rem); }
 
 /* ==========================================================================
    Tableaux de tarifs — lisibilité avant décoration
@@ -553,6 +605,9 @@ button { font: inherit; color: inherit; }
 }
 
 .formulaire { display: flex; flex-direction: column; gap: var(--e-5); }
+
+/* Champ piège pour les robots : retiré de la mise en page et du parcours. */
+.piege-robots { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 .champ { display: flex; flex-direction: column; gap: var(--e-2); }
 
@@ -701,8 +756,8 @@ button { font: inherit; color: inherit; }
 }
 
 @media (max-width: 420px) {
-  .logo { font-size: 1.1rem; }
-  .logo span { font-size: 0.56em; }
+  .logo__mot { font-size: 1.12rem; }
+  .logo__signe { width: 1.75rem; height: 1.75rem; }
   .entete__barre { gap: var(--e-3); }
 }
 

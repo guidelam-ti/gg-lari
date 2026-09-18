@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="t d">
+  <title id="t">Arche décorée et table de fête</title>
+  <desc id="d">Illustration bichrome : une arche de ballons au-dessus d'une table dressée avec un gâteau.</desc>
+
+  <rect width="200" height="200" fill="#12203A"/>
+  <path d="M34 168 A66 66 0 0 1 166 168" fill="none" stroke="#C89B3C" stroke-width="5"/>
+  <circle cx="34.0" cy="168.0" r="9" fill="#C89B3C"/>
+  <circle cx="37.2" cy="147.6" r="6.5" fill="#F7F1E6"/>
+  <circle cx="46.6" cy="129.2" r="9" fill="#4C6B4F"/>
+  <circle cx="61.2" cy="114.6" r="6.5" fill="#C89B3C"/>
+  <circle cx="79.6" cy="105.2" r="9" fill="#F7F1E6"/>
+  <circle cx="100.0" cy="102.0" r="6.5" fill="#4C6B4F"/>
+  <circle cx="120.4" cy="105.2" r="9" fill="#C89B3C"/>
+  <circle cx="138.8" cy="114.6" r="6.5" fill="#F7F1E6"/>
+  <circle cx="153.4" cy="129.2" r="9" fill="#4C6B4F"/>
+  <circle cx="162.8" cy="147.6" r="6.5" fill="#C89B3C"/>
+  <circle cx="166.0" cy="168.0" r="9" fill="#F7F1E6"/>
+  <rect x="52" y="168" width="96" height="6" fill="#C89B3C"/>
+  <path d="M60 174h80l-8 20H68Z" fill="#1B2A4A"/>
+  <rect x="88" y="150" width="24" height="18" fill="#F7F1E6"/>
+  <rect x="92" y="138" width="16" height="12" fill="#F7F1E6"/>
+  <path d="M100 130v8" stroke="#C89B3C" stroke-width="3"/>
+  <path d="M105.0 127.0 L100.0 132.0 L95.0 127.0 L100.0 122.0Z" fill="#C89B3C"/>
+</svg>

@@ -18,9 +18,14 @@ contact.html                  Formulaire de contact et de réservation
 assets/style.css              Design system complet (tokens de couleur, typographie, composants)
 assets/main.js                Menu mobile, validation et envoi du formulaire
 assets/favicon.svg            Favicon (losange or sur indigo, reprise du motif de frise)
-assets/img/                   Dossier prévu pour les photos (vide pour l'instant)
+assets/img/logo.svg           Signe de la marque, associé au nom dans l'en-tête
+assets/img/illustration-*.svg Illustrations de marque, en attente de vraies photos
 .nojekyll                     Désactive Jekyll côté GitHub Pages
-.github/workflows/deploy.yml  Vérification puis déploiement sur GitHub Pages
+
+.github/workflows/
+  deploy.yml                  Vérification, puis déploiement sur GitHub Pages
+  deploy-netlify.yml          Déploiement sur Netlify (ignoré sans ses secrets)
+  deploy-cloudflare.yml       Déploiement sur Cloudflare Pages (idem)
 ```
 
 ## Consulter le site en local
@@ -32,6 +37,70 @@ python3 -m http.server 8000
 
 Un simple double-clic sur `index.html` fonctionne aussi, mais un serveur local
 reproduit plus fidèlement le comportement en ligne.
+
+## Où héberger le site
+
+Trois pipelines sont fournis dans `.github/workflows/`. Ils déploient tous
+exactement le même dossier ; il suffit d'en choisir un. Ceux dont les secrets
+ne sont pas renseignés se terminent sans rien faire, sans faire échouer la
+suite — on peut donc les laisser en place.
+
+| Hébergeur | Dépôt privé en gratuit | Formulaire inclus | Workflow |
+|---|---|---|---|
+| **Netlify** | oui | **oui**, Netlify Forms | `deploy-netlify.yml` |
+| **Cloudflare Pages** | oui | non | `deploy-cloudflare.yml` |
+| **GitHub Pages** | non, plan payant requis | non | `deploy.yml` |
+
+**Recommandation : Netlify.** C'est le seul des trois qui règle les deux
+problèmes d'un coup. Il accepte un dépôt privé sur l'offre gratuite, ce qui
+évite de rendre le code public, et **Netlify Forms** reçoit les demandes du
+formulaire et les transfère par courriel — plus besoin de Formspree ni d'aucun
+autre service. L'offre gratuite couvre 100 envois de formulaire par mois et
+100 Go de bande passante, très au-delà des besoins d'un site vitrine.
+
+**Cloudflare Pages** est le choix à faire si la vitesse d'affichage prime : bande
+passante illimitée, réseau très rapide, domaine personnalisé et certificat
+gratuits. Mais il ne gère pas les formulaires, il faut donc garder Formspree à
+côté.
+
+**GitHub Pages** reste parfaitement valable à une condition : rendre le dépôt
+public. Le site est une vitrine, son code n'a rien de confidentiel, et cela ne
+coûte rien. C'est l'option la plus simple si vous ne voulez pas créer de compte
+ailleurs.
+
+Deux options volontairement écartées :
+
+- **Vercel** — techniquement excellent, mais son offre gratuite (« Hobby ») est
+  réservée aux projets **non commerciaux**. Éclats et Saveurs étant une
+  entreprise, l'utiliser sur ce plan irait à l'encontre de ses conditions.
+- **AWS S3 + CloudFront** — puissant et bon marché, mais il n'y a pas d'offre
+  gratuite permanente et la configuration initiale (bucket, distribution,
+  certificat, DNS) est disproportionnée pour cinq pages statiques.
+
+### Mettre en route Netlify
+
+1. Créer un compte sur [netlify.com](https://www.netlify.com) et y créer un site
+   vide (**Add new site → Deploy manually**, en déposant n'importe quoi ; le
+   workflow écrasera le contenu au premier déploiement).
+2. Relever le **Site ID** dans **Site configuration → Site details**.
+3. Créer un jeton dans **User settings → Applications → Personal access tokens**.
+4. Dans GitHub, **Settings → Secrets and variables → Actions → New repository
+   secret**, ajouter `NETLIFY_AUTH_TOKEN` et `NETLIFY_SITE_ID`.
+5. Pousser, ou lancer le workflow à la main depuis l'onglet **Actions**.
+
+Pour recevoir les demandes par courriel : **Site configuration → Forms →
+Form notifications → Add notification → Email notification**, et indiquer
+l'adresse de Christelle. Puis mettre `FORM_ENDPOINT = "/"` dans
+`assets/main.js`.
+
+### Mettre en route Cloudflare Pages
+
+1. Créer un compte sur [cloudflare.com](https://dash.cloudflare.com) et relever
+   l'**Account ID** sur le tableau de bord.
+2. Créer un jeton d'API avec la permission **Cloudflare Pages — Edit**.
+3. Ajouter les secrets `CLOUDFLARE_API_TOKEN` et `CLOUDFLARE_ACCOUNT_ID`.
+4. Facultatif : la variable `CLOUDFLARE_PROJECT_NAME` change le nom du projet,
+   qui vaut `eclats-et-saveurs` par défaut.
 
 ## Déploiement sur GitHub Pages
 
@@ -100,23 +169,51 @@ Aucune modification du code n'est nécessaire, les chemins étant déjà relatif
 
 Le formulaire fonctionne dès maintenant, sans configuration : faute d'endpoint,
 il ouvre le logiciel de messagerie du visiteur avec une demande déjà rédigée
-(repli `mailto`). Pour recevoir les demandes de façon centralisée, brancher
-**Formspree** :
+(repli `mailto` vers l'adresse de Christelle). C'est fonctionnel, mais cela
+dépend du logiciel de messagerie du visiteur et ne laisse aucune trace côté
+Éclats et Saveurs. Trois façons de faire mieux, au choix.
 
-1. Créer un formulaire sur [formspree.io](https://formspree.io) et copier son
-   endpoint (de la forme `https://formspree.io/f/xxxxxxxx`).
-2. Ouvrir `assets/main.js` et renseigner les deux constantes en haut du fichier :
+La constante à modifier est la même dans les trois cas, en haut de
+`assets/main.js` :
 
 ```js
-var FORM_ENDPOINT = "https://formspree.io/f/xxxxxxxx";
-var CONTACT_EMAIL = "bonjour@votre-domaine.com";
+var FORM_ENDPOINT = "";
 ```
 
-`CONTACT_EMAIL` sert au repli `mailto` et aux messages d'erreur ; il doit
-correspondre à l'adresse affichée dans `contact.html` et dans le pied de page.
+### Option A — Netlify Forms (recommandée si le site est sur Netlify)
 
-L'envoi se fait en AJAX : la page ne se recharge pas, et un message de
-confirmation ou d'erreur s'affiche sous le bouton.
+Aucun service tiers, aucun compte de plus. `contact.html` porte déjà les
+attributs nécessaires (`data-netlify`, `form-name`, piège à robots) ; ils sont
+inertes sur les autres hébergeurs. Il suffit de mettre :
+
+```js
+var FORM_ENDPOINT = "/";
+```
+
+puis d'activer la notification par courriel dans l'interface Netlify.
+
+### Option B — Formspree
+
+1. Créer un formulaire sur [formspree.io](https://formspree.io) avec l'adresse
+   de réception.
+2. Copier l'endpoint, de la forme `https://formspree.io/f/xxxxxxxx`.
+3. Le coller dans `FORM_ENDPOINT`.
+
+L'offre gratuite couvre 50 envois par mois.
+
+### Option C — FormSubmit, sans création de compte
+
+[FormSubmit](https://formsubmit.co) ne demande aucune inscription : l'endpoint
+est construit à partir de l'adresse de réception, et un courriel de
+confirmation valide l'activation au premier envoi.
+
+```js
+var FORM_ENDPOINT = "https://formsubmit.co/ajax/laritaffou@gmail.com";
+```
+
+C'est la voie la plus rapide, mais l'adresse apparaît alors en clair dans le
+code source du site. FormSubmit fournit un identifiant anonyme après le premier
+envoi : il est préférable de l'utiliser à la place de l'adresse.
 
 ## Informations encore manquantes
 
@@ -129,17 +226,21 @@ grep -rn "TODO" --include="*.html" --include="*.js" .
 
 | À fournir | Où le renseigner |
 |---|---|
-| Téléphone de contact | pied de page des 5 pages, bloc « Coordonnées » de `contact.html` |
-| Email de réception des réservations | mêmes emplacements, plus `CONTACT_EMAIL` dans `assets/main.js` |
-| Ville / région desservie | pied de page des 5 pages, bloc « Coordonnées » |
-| Liens Facebook / Instagram | pied de page des 5 pages, bloc « Coordonnées » |
-| Horaires | pied de page des 5 pages |
-| Délai de réponse habituel | `contact.html`, bloc « Coordonnées » (aucun délai n'est affiché pour ne rien promettre) |
-| Logo image | remplacer le contenu du lien `.logo` dans les 5 pages par `<img src="assets/img/logo.svg" alt="Éclats et Saveurs">` |
-| Photos des plats et des événements | déposer dans `assets/img/`, puis remplacer les commentaires `<!-- TODO: photo -->` de `cuisine.html` et `decoration-evenements.html` |
-| Nom de la fondatrice à afficher | facultatif ; emplacement naturel dans le bloc « expérience » de `aide-a-domicile.html` |
-| Endpoint Formspree | `FORM_ENDPOINT` dans `assets/main.js` |
+| Liens Facebook / Instagram | pied de page des 5 pages, bloc « Coordonnées » de `contact.html` |
+| Endpoint du formulaire | `FORM_ENDPOINT` dans `assets/main.js` — voir la section ci-dessus |
+| Photos réelles des plats et des événements | déposer dans `assets/img/`, puis remplacer les `src` des `<img>` de la galerie dans `cuisine.html` et `decoration-evenements.html` |
+| Horaires d'ouverture | non affichés pour l'instant ; à ajouter au pied de page si utile |
 | Domaine personnalisé | voir « Ajouter un domaine personnalisé » ci-dessus |
+
+Déjà renseigné : adresse de réception `laritaffou@gmail.com` (Christelle
+Yamdjeu, fondatrice), zone desservie Montréal (Canada), délai de réponse annoncé
+de 24 heures au maximum. Aucun numéro de téléphone n'est affiché, conformément
+à la demande.
+
+> L'adresse de Christelle apparaît en clair dans le code source des pages, ce
+> qui l'expose aux robots collecteurs de courriels. Une fois le formulaire
+> branché sur Netlify Forms ou Formspree, on peut retirer les liens `mailto:`
+> du pied de page et de `contact.html` et ne laisser que le formulaire.
 
 ## Design system
 
@@ -180,6 +281,32 @@ contour d'un composant d'interface.
 les titres, `Work Sans` pour le texte courant, toutes deux chargées depuis Google
 Fonts avec une pile de repli système. Les prix utilisent
 `font-variant-numeric: tabular-nums` pour rester alignés en colonne.
+
+## Logo et illustrations
+
+**Le logo** est un verrouillage en deux parties : le signe `assets/img/logo.svg`
+et le nom composé en Fraunces directement dans le HTML. Garder le nom en texte
+vivant plutôt qu'en image le rend sélectionnable, lisible par les lecteurs
+d'écran et net à toutes les résolutions. Le signe reprend le losange de la frise
+textile qui rythme le site : un losange évidé, quatre éclats sur les axes, un
+cœur plein. Il reste lisible jusqu'à 16 px et fonctionne sur fond ivoire comme
+sur fond indigo. `assets/favicon.svg` en est la version simplifiée, sans les
+éclats, posée sur un carré indigo.
+
+**Les illustrations** `assets/img/illustration-*.svg` sont des dessins
+vectoriels, pas des photographies. Elles n'utilisent que les couleurs de la
+marque, ce qui les rend volontairement graphiques plutôt que réalistes : elles
+tiennent la place de vraies photos sans prétendre en être.
+
+Pour les remplacer par de vraies photos, il suffit de déposer les fichiers dans
+`assets/img/` et de changer les `src` des `<img>` concernées. Le conteneur
+impose un carré avec `aspect-ratio: 1` et `object-fit: cover` : une photo de
+n'importe quel format se recadre proprement, sans toucher au CSS. Penser à
+réécrire les `alt`, qui décrivent aujourd'hui les illustrations.
+
+Pour un traiteur, de vraies photos des plats de Christelle convertiront
+nettement mieux que n'importe quelle illustration : c'est le remplacement le
+plus rentable à faire sur ce site.
 
 ## Notes de maintenance
 

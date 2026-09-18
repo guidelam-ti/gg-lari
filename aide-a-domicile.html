@@ -18,9 +18,12 @@
        navigation doit être reportée dans chacune d'elles. -->
   <header class="entete">
     <div class="enveloppe entete__barre">
-      <!-- TODO: pour remplacer le logo texte par un fichier image, substituer le
-           contenu de ce lien par <img src="assets/img/logo.svg" alt="Éclats et Saveurs"> -->
-      <a class="logo" href="index.html">Éclats et Saveurs<span>Cuisine · Aide à domicile · Événements</span></a>
+      <!-- alt vide : le nom qui suit dit déjà la marque, un alt le répéterait
+           inutilement aux lecteurs d'écran. -->
+      <a class="logo" href="index.html">
+        <img class="logo__signe" src="assets/img/logo.svg" alt="" width="36" height="36">
+        <span class="logo__mot">Éclats et Saveurs</span>
+      </a>
 
       <button class="bascule-menu" type="button" data-bascule-menu
               aria-expanded="false" aria-controls="navigation-principale"
@@ -108,6 +111,7 @@
         <h2 class="titre-section">Une expérience d’auxiliaire de soins à domicile</h2>
         <p class="chapeau">Un service humain, respectueux et adapté aux besoins de chaque personne
            et de chaque famille.</p>
+        <p class="signature">Christelle Yamdjeu, fondatrice d’Éclats et Saveurs</p>
         <div class="groupe-boutons">
           <a class="bouton bouton--reserver" href="contact.html">Réserver un forfait</a>
         </div>
@@ -128,22 +132,17 @@
         <div>
           <p class="pied__titre">Nous joindre</p>
           <ul>
-            <!-- TODO: remplacer par le vrai numéro de téléphone (href tel: inclus) -->
-            <li>Téléphone à communiquer</li>
-            <!-- TODO: remplacer par la vraie adresse de réception des réservations -->
-            <li><a href="mailto:contact@eclatsetsaveurs.example">contact@eclatsetsaveurs.example</a></li>
-            <!-- TODO: préciser la ville / région desservie -->
-            <li>Zone desservie à préciser</li>
+            <li><a href="mailto:laritaffou@gmail.com">laritaffou@gmail.com</a></li>
+            <li>Montréal, Canada</li>
+            <li>Réponse sous 24 heures</li>
           </ul>
         </div>
 
         <div>
-          <p class="pied__titre">Horaires et réseaux</p>
+          <p class="pied__titre">Réseaux</p>
           <ul>
-            <!-- TODO: renseigner les horaires réels -->
-            <li>Horaires à communiquer</li>
             <!-- TODO: remplacer par les liens Facebook / Instagram s'ils existent,
-                 ou supprimer ces deux lignes -->
+                 ou retirer cette colonne -->
             <li>Facebook à venir</li>
             <li>Instagram à venir</li>
           </ul>

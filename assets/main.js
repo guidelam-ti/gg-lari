@@ -12,16 +12,22 @@
      Voir README.md, section « Brancher le formulaire de contact ».
      ------------------------------------------------------------------------ */
 
-  /* TODO: remplacer par le vrai endpoint Formspree, p. ex.
-     "https://formspree.io/f/xxxxxxxx". Laissé vide, le formulaire bascule
-     automatiquement sur un message pré-rempli dans le logiciel de messagerie
-     du visiteur (repli mailto) : le site reste utilisable sans configuration. */
+  /* Adresse à laquelle le formulaire est envoyé. Trois valeurs possibles :
+       - ""                            repli mailto (état actuel) : la demande
+                                       s'ouvre pré-rédigée dans le logiciel de
+                                       messagerie du visiteur ;
+       - "https://formspree.io/f/xxx"  endpoint Formspree ;
+       - "/"                           site déployé sur Netlify, Netlify Forms
+                                       prend le relais grâce aux attributs du
+                                       formulaire dans contact.html.
+     TODO: renseigner l'endpoint choisi. Voir README, « Brancher le formulaire
+     de contact ». */
   var FORM_ENDPOINT = "";
 
-  /* TODO: remplacer par la vraie adresse de réception des réservations.
-     Sert au repli mailto et doit correspondre à l'adresse affichée dans le
-     bloc « Coordonnées » de contact.html et dans le pied de page. */
-  var CONTACT_EMAIL = "contact@eclatsetsaveurs.example";
+  /* Adresse de réception des réservations (Christelle Yamdjeu, fondatrice).
+     Sert au repli mailto et aux messages d'erreur ; doit rester identique à
+     l'adresse affichée dans contact.html et dans le pied de page. */
+  var CONTACT_EMAIL = "laritaffou@gmail.com";
 
   /* ======================================================================
      1. Menu mobile
@@ -117,7 +123,9 @@
   }
 
   function validerFormulaire(formulaire) {
-    var champs = formulaire.querySelectorAll("input, select, textarea");
+    var champs = formulaire.querySelectorAll(
+      "input:not([name='bot-field']):not([type='hidden']), select, textarea"
+    );
     var premierInvalide = null;
 
     Array.prototype.forEach.call(champs, function (champ) {
@@ -221,7 +229,7 @@
           formulaire.reset();
           annoncer(
             "Merci " + donnees.nom + ", votre demande est bien partie. " +
-            "Nous vous répondons personnellement pour en discuter.",
+            "Christelle vous répond personnellement sous 24 heures au maximum.",
             false
           );
         })

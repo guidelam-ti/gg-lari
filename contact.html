@@ -18,9 +18,12 @@
        navigation doit être reportée dans chacune d'elles. -->
   <header class="entete">
     <div class="enveloppe entete__barre">
-      <!-- TODO: pour remplacer le logo texte par un fichier image, substituer le
-           contenu de ce lien par <img src="assets/img/logo.svg" alt="Éclats et Saveurs"> -->
-      <a class="logo" href="index.html">Éclats et Saveurs<span>Cuisine · Aide à domicile · Événements</span></a>
+      <!-- alt vide : le nom qui suit dit déjà la marque, un alt le répéterait
+           inutilement aux lecteurs d'écran. -->
+      <a class="logo" href="index.html">
+        <img class="logo__signe" src="assets/img/logo.svg" alt="" width="36" height="36">
+        <span class="logo__mot">Éclats et Saveurs</span>
+      </a>
 
       <button class="bascule-menu" type="button" data-bascule-menu
               aria-expanded="false" aria-controls="navigation-principale"
@@ -46,14 +49,25 @@
       <div class="enveloppe heros__contenu">
         <h1>Parlons de votre demande.</h1>
         <p class="heros__accroche">Un pack de marmites, un coup de main à domicile ou la décoration
-          d’un événement : dites-nous ce dont vous avez besoin, et nous revenons vers vous pour en
-          discuter et ajuster le tarif.</p>
+          d’un événement : dites-nous ce dont vous avez besoin. Christelle vous répond
+          personnellement, sous 24 heures au maximum, pour en discuter et ajuster le tarif.</p>
       </div>
     </section>
 
     <section class="section--serre">
       <div class="enveloppe contact-grille">
-        <form class="formulaire" data-formulaire-contact novalidate>
+        <!-- Les attributs « netlify » sont inertes partout ailleurs : sur GitHub
+             Pages ou Cloudflare, ils ne font rien. Déployé sur Netlify, ils
+             activent Netlify Forms, qui envoie chaque demande par courriel sans
+             service tiers. Voir README, « Brancher le formulaire de contact ». -->
+        <form class="formulaire" data-formulaire-contact novalidate
+              name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="contact">
+          <!-- Piège à robots : invisible et jamais rempli par un visiteur. -->
+          <p class="piege-robots" aria-hidden="true">
+            <label>Ne rien saisir ici <input tabindex="-1" autocomplete="off" name="bot-field"></label>
+          </p>
+
           <h2 class="titre-section">Votre demande</h2>
 
           <div class="champ">
@@ -120,20 +134,17 @@
           <h2>Nous joindre directement</h2>
           <dl>
             <div>
-              <dt>Téléphone</dt>
-              <!-- TODO: remplacer par le vrai numéro et rétablir le lien tel: -->
-              <dd>À communiquer</dd>
-            </div>
-            <div>
               <dt>Email</dt>
-              <!-- TODO: remplacer par la vraie adresse de réception des réservations.
-                   Elle doit correspondre à CONTACT_EMAIL dans assets/main.js. -->
-              <dd><a href="mailto:contact@eclatsetsaveurs.example">contact@eclatsetsaveurs.example</a></dd>
+              <!-- Cette adresse doit rester identique à CONTACT_EMAIL dans assets/main.js. -->
+              <dd><a href="mailto:laritaffou@gmail.com">laritaffou@gmail.com</a></dd>
             </div>
             <div>
               <dt>Zone desservie</dt>
-              <!-- TODO: préciser la ville / région desservie -->
-              <dd>À préciser</dd>
+              <dd>Montréal, Canada</dd>
+            </div>
+            <div>
+              <dt>Délai de réponse</dt>
+              <dd>Sous 24 heures au maximum</dd>
             </div>
             <div>
               <dt>Réseaux sociaux</dt>
@@ -141,8 +152,8 @@
               <dd>À venir</dd>
             </div>
           </dl>
-          <!-- TODO: si un délai de réponse habituel est connu, l'indiquer ici.
-               Aucun délai n'est affiché pour ne pas promettre ce qui n'est pas tenu. -->
+          <p class="signature">Christelle Yamdjeu, fondatrice d’Éclats et Saveurs, vous répond
+             personnellement.</p>
           <p>Les tarifs indiqués sur le site sont des prix de base. Ils s’ajustent selon les
              quantités, les ingrédients et la prestation demandée.</p>
         </aside>
@@ -163,22 +174,17 @@
         <div>
           <p class="pied__titre">Nous joindre</p>
           <ul>
-            <!-- TODO: remplacer par le vrai numéro de téléphone (href tel: inclus) -->
-            <li>Téléphone à communiquer</li>
-            <!-- TODO: remplacer par la vraie adresse de réception des réservations -->
-            <li><a href="mailto:contact@eclatsetsaveurs.example">contact@eclatsetsaveurs.example</a></li>
-            <!-- TODO: préciser la ville / région desservie -->
-            <li>Zone desservie à préciser</li>
+            <li><a href="mailto:laritaffou@gmail.com">laritaffou@gmail.com</a></li>
+            <li>Montréal, Canada</li>
+            <li>Réponse sous 24 heures</li>
           </ul>
         </div>
 
         <div>
-          <p class="pied__titre">Horaires et réseaux</p>
+          <p class="pied__titre">Réseaux</p>
           <ul>
-            <!-- TODO: renseigner les horaires réels -->
-            <li>Horaires à communiquer</li>
             <!-- TODO: remplacer par les liens Facebook / Instagram s'ils existent,
-                 ou supprimer ces deux lignes -->
+                 ou retirer cette colonne -->
             <li>Facebook à venir</li>
             <li>Instagram à venir</li>
           </ul>
